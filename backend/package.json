@@ -1,0 +1,23 @@
+{
+  "name": "aio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aneiser/aio.git"
+  },
+  "author": "Adrián Neila Serrano",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aneiser/aio/issues"
+  },
+  "homepage": "https://github.com/aneiser/aio#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "hardhat": "^2.12.6"
+  }
+}
