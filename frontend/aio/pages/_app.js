@@ -6,6 +6,8 @@ import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+// Chakra UI
+import { ChakraProvider } from '@chakra-ui/react'
 
 // Wagmi
 const { chains, provider } = configureChains(
@@ -31,7 +33,9 @@ export default function App({ Component, pageProps }) {
   return (
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains}>
+        <ChakraProvider>
           <Component {...pageProps} />
+        </ChakraProvider>
       </RainbowKitProvider>
     </WagmiConfig>
   )
