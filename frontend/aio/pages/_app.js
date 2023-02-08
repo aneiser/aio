@@ -1,5 +1,3 @@
-import '@/styles/globals.css'
-
 // Rainbowkit
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 // Wagmi
