@@ -7,7 +7,7 @@ contract AverageTask {
     struct AverageConfig {
         string tokenName;
         bool isActive;
-        uint ammount;
+        uint amount;
         uint frequency;
     }
 
@@ -15,24 +15,24 @@ contract AverageTask {
 
 
     //  Events
-    event AverageTaskCreated          (address tokenAddress, string tokenName, bool isActive, uint ammount, uint frequency);
+    event AverageTaskCreated          (address tokenAddress, string tokenName, bool isActive, uint amount, uint frequency);
     event StatusAverageTaskUpdated    (address tokenAddress,                   bool isActive);
-    event AmmountAverageTaskUpdated   (address tokenAddress,                                  uint ammount);
+    event AmountAverageTaskUpdated   (address tokenAddress,                                  uint amount);
     event FrequencyAverageTaskUpdated (address tokenAddress,                                                uint frequency);
-    event AverageTaskUpdated          (address tokenAddress,                   bool isActive, uint ammount, uint frequency);
+    event AverageTaskUpdated          (address tokenAddress,                   bool isActive, uint amount, uint frequency);
     event AverageTaskDeleted          (address tokenAddress);
 
 
     // Functions
     // CRUD functions
     // Create
-    function createAverageTask(address _tokenAddress, string memory _tokenName, bool _isActive, uint _ammount, uint _frequency) public {
+    function createAverageTask(address _tokenAddress, string memory _tokenName, bool _isActive, uint _amount, uint _frequency) public {
         tokensToAverage[_tokenAddress].tokenName = _tokenName;
         tokensToAverage[_tokenAddress].isActive = _isActive;
-        tokensToAverage[_tokenAddress].ammount = _ammount;
+        tokensToAverage[_tokenAddress].amount = _amount;
         tokensToAverage[_tokenAddress].frequency = _frequency;
 
-        emit AverageTaskCreated(_tokenAddress,  _tokenName, _isActive, _ammount, _frequency);
+        emit AverageTaskCreated(_tokenAddress,  _tokenName, _isActive, _amount, _frequency);
     }
 
     // Read
@@ -47,10 +47,10 @@ contract AverageTask {
         emit StatusAverageTaskUpdated(_tokenAddress, tokensToAverage[_tokenAddress].isActive);
     }
 
-    function updateAmmountAverageTask(address _tokenAddress, uint _ammount) public {
-        tokensToAverage[_tokenAddress].ammount = _ammount;
+    function updateAmountAverageTask(address _tokenAddress, uint _amount) public {
+        tokensToAverage[_tokenAddress].amount = _amount;
 
-        emit AmmountAverageTaskUpdated(_tokenAddress, _ammount);
+        emit AmountAverageTaskUpdated(_tokenAddress, _amount);
     }
 
     function updateFrequencyAverageTask(address _tokenAddress, uint _frequency) public {
@@ -59,12 +59,12 @@ contract AverageTask {
         emit FrequencyAverageTaskUpdated(_tokenAddress, _frequency);
     }
 
-    function updateAverageTask(address _tokenAddress, bool _isActive, uint _ammount, uint _frequency) public {
+    function updateAverageTask(address _tokenAddress, bool _isActive, uint _amount, uint _frequency) public {
         tokensToAverage[_tokenAddress].isActive = _isActive;
-        tokensToAverage[_tokenAddress].ammount = _ammount;
+        tokensToAverage[_tokenAddress].amount = _amount;
         tokensToAverage[_tokenAddress].frequency = _frequency;
 
-        emit AverageTaskUpdated(_tokenAddress, _isActive, _ammount, _frequency);
+        emit AverageTaskUpdated(_tokenAddress, _isActive, _amount, _frequency);
     }
 
     // Delete
