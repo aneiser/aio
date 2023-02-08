@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react'
 
 
-export function AverageTasksTable() {
+export function AveragingStrategiesTable() {
     return (
         <TableContainer>
             <Table variant='simple'>

@@ -6,7 +6,7 @@ module.exports = async({ getNamedAccounts, deployments }) => {
 
     log("--------------------------------------")
     arguments = []
-    const AverageTask = await deploy("AverageTask", {
+    const AveragingStrategy = await deploy("AveragingStrategy", {
         from: deployer,
         args: arguments,
         log: true,
@@ -14,4 +14,4 @@ module.exports = async({ getNamedAccounts, deployments }) => {
     })
 }
 
-module.exports.tags = ["all", "averageTask", "main"]
+module.exports.tags = ["all", "averagingStrategy", "main"]
