@@ -1,5 +1,6 @@
 // Rainbowkit
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import '@rainbow-me/rainbowkit/styles.css';
 // Wagmi
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
