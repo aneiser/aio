@@ -2,6 +2,7 @@
 import Head from 'next/head'
 // Component & Dapp
 import { Layout } from '@/components/layout/Layout.jsx'
+import { AverageTasksTable } from '@/components/tables/AverageTasksTable.jsx'
 
 
 export default function Home() {
@@ -14,7 +15,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        Body goes here
+        <AverageTasksTable></AverageTasksTable>
       </Layout>
     </>
   )
