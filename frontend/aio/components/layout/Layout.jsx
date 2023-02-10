@@ -7,7 +7,7 @@ export function Layout({ children }) {
     return (
         <Flex direction="column" minH="100vh">
             <Header />
-            <Flex grow="1">
+            <Flex grow="1" p="1rem">
                 {children}
             </Flex>
             <Footer />
