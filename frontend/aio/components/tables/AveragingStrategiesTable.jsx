@@ -57,6 +57,6 @@ export function AveragingStrategiesTable() {
                     </Tr>
                 </Tbody>
             </Table>
-            </TableContainer>
+        </TableContainer>
     )
 }

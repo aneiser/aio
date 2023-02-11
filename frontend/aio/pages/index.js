@@ -3,6 +3,7 @@ import Head from 'next/head'
 // Component & Dapp
 import { Layout } from '@/components/layout/Layout.jsx'
 import { AveragingStrategiesTable } from '@/components/tables/AveragingStrategiesTable.jsx'
+import { AveragingStrategiesForm } from '@/components/forms/AveragingStrategiesForm.jsx'
 
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
+        <AveragingStrategiesForm></AveragingStrategiesForm>
         <AveragingStrategiesTable></AveragingStrategiesTable>
       </Layout>
     </>
