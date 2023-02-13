@@ -17,7 +17,7 @@ export function AveragingStrategiesTable() {
             <Table variant='simple'>
                 <TableCaption>Defined dollar cost averaging strategies</TableCaption>
                 <Thead>
-                    <Tr key="tokenAddress">
+                    <Tr key="tokenAddress_1">
                         <Th>Status</Th>{/* <Th>isActive</Th> */}
                         <Th>Token</Th>{/* <Th>tokenName</Th> */}
                         <Th isNumeric>DCA amount</Th>{/* <Th>amount</Th> */}
@@ -28,7 +28,7 @@ export function AveragingStrategiesTable() {
                     </Tr>
                 </Thead>
                 <Tbody>
-                    <Tr key="tokenAddress">
+                    <Tr key="tokenAddress_2">
                         <Td>Active</Td>
                         <Td>ETH</Td>
                         <Td isNumeric>10 $</Td>
@@ -37,7 +37,7 @@ export function AveragingStrategiesTable() {
                         <Td isNumeric>1300 $</Td>
                         <Td isNumeric>10 %</Td>
                     </Tr>
-                    <Tr key="tokenAddress">
+                    <Tr key="tokenAddress_3">
                         <Td>Active</Td>
                         <Td>ETH</Td>
                         <Td isNumeric>10 $</Td>
@@ -46,7 +46,7 @@ export function AveragingStrategiesTable() {
                         <Td isNumeric>1300 $</Td>
                         <Td isNumeric>10 %</Td>
                     </Tr>
-                    <Tr key="tokenAddress">
+                    <Tr key="tokenAddress_4">
                         <Td>Active</Td>
                         <Td>ETH</Td>
                         <Td isNumeric>10 $</Td>
