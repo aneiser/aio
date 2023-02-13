@@ -2,7 +2,10 @@
 import { useState, useEffect } from 'react'
 // Next
 // Ethers
+import { ethers } from 'ethers'
 // WagmiConfig
+import { useAccount } from 'wagmi'
+import { useProvider } from 'wagmi'
 // RainbowKitProvider
 // ChakraProvider
 import { Card, CardHeader, CardBody, CardFooter } from '@chakra-ui/react'
@@ -27,12 +30,71 @@ import {
 import { Select } from '@chakra-ui/react'
 import { Switch } from '@chakra-ui/react'
 import { Button, ButtonGroup } from '@chakra-ui/react'
+// Component & Dapp
+import MockDaiTokenContract from 'public/MockDaiToken.json'
+
 
 export function AveragingStrategiesForm() {
+    // Constants
+    // -----------------------------------------------------------------------------------------------------------------
+    // Addresses
+    const MOCK_DAI_CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+
+
+    // // States for...
+    // // -----------------------------------------------------------------------------------------------------------------
+    // // ...the mockDAI balance
+    const [mockDaiBalance, setMockDaiBalance] = useState("?")
+
+
+    // Wagmi hooks for... (https://wagmi.sh/react/getting-started)
+    // -----------------------------------------------------------------------------------------------------------------
+    // ...accessing account data and connection status.
+    const { address, isConnected } = useAccount()
+    // // ...accessing Client's ethers Provider.
+    const provider = useProvider()
+
+
+    // RainbowKit
+    // -----------------------------------------------------------------------------------------------------------------
+    // ...RainbowKit A
+    // ...RainbowKit B
+
+
+    // ChakraProvider
+    // -----------------------------------------------------------------------------------------------------------------
     const [input, setInput] = useState("")
     const handleInputChange = (e) => setInput(e.target.value)
     const isError = input === ""
 
+
+    // Variables
+    // -----------------------------------------------------------------------------------------------------------------
+
+
+    // `useEffect`s
+    // -------------------------------------------------------------------------------------------------------------------
+    // Calls 'getEvents()' whenever the users:
+    // - connect their wallet to the Dapp (isConnected)
+    // - change the account in their wallet (address)
+    useEffect(() => {
+        if (isConnected) {
+            getMockDaiBalance()
+        }
+    }, [isConnected, address])
+
+    // Functions
+    // -----------------------------------------------------------------------------------------------------------------
+    // Gets mock DAI balance
+    const getMockDaiBalance = async () => {
+        const contract = new ethers.Contract(MOCK_DAI_CONTRACT_ADDRESS, MockDaiTokenContract.abi, provider)
+        let transaction = await contract.balanceOf(address)
+        setMockDaiBalance(ethers.utils.formatEther(transaction.toString()))
+    }
+
+
+    // HTML content
+    // -----------------------------------------------------------------------------------------------------------------
     return (
         <Card maxW="xs">
             <FormControl>
@@ -46,8 +108,8 @@ export function AveragingStrategiesForm() {
                         <VStack spacing="0rem" align="stretch">
                             <FormLabel>Source token</FormLabel>
                             <HStack spacing="24px">
-                                <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
-                                <Text>DAI</Text>
+                                <Avatar name="mock DAI" bg='yellow.500'/>
+                                <Text>mock DAI {mockDaiBalance}</Text>
                             </HStack>
                         </VStack>
                         <VStack spacing="0rem" align="stretch">
