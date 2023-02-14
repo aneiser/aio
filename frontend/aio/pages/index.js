@@ -34,7 +34,7 @@ export default function Home() {
           </>
         ) : (
           <Flex p="2rem" justifyContent="center">
-            <Text>Please, connect your wallet to use Voting DApp</Text>
+            <Text>Please, connect your wallet to use AIO</Text>
           </Flex>
         )}
       </Layout>
