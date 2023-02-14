@@ -30,8 +30,11 @@ import {
 import { Select } from '@chakra-ui/react'
 import { Switch } from '@chakra-ui/react'
 import { Button, ButtonGroup } from '@chakra-ui/react'
+import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 // Component & Dapp
 import MockDaiTokenContract from 'public/MockDaiToken.json'
+// Openocean API/SDK integation
+// Must be done dynamically with useEffect after Next.js pre-renders
 
 
 export function AveragingStrategiesForm() {
@@ -39,19 +42,28 @@ export function AveragingStrategiesForm() {
     // -----------------------------------------------------------------------------------------------------------------
     // Addresses
     const MOCK_DAI_CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    const SUPPORTED_TOKENS = ["DAI", "1INCH", "AAVE", "AXS", "CRV", "LINK", "MANA", "MATIC", "MKR", "SHIB", "SUSHI", "UNI", "YFI", "WETH", "WBTC", "SAND"];
 
 
-    // // States for...
-    // // -----------------------------------------------------------------------------------------------------------------
-    // // ...the mockDAI balance
+    // States for...
+    // -----------------------------------------------------------------------------------------------------------------
+    // ...the mockDAI balance
     const [mockDaiBalance, setMockDaiBalance] = useState("?")
+    // ...the tokens supported by AIO
+    const [supportedTokens, setSupportedTokens] = useState([])
+    // ...the selected averaging source token and its loading
+    const [selectedSourceToken, setSelectedSourceToken] = useState(null)
+    const [isLoadingSelectedSourceToken, setIsLoadingSelectedSourceToken] = useState(true)
+    // ...the selected token to average and its loading
+    const [selectedTokenToAverage, setSelectedTokenToAverage] = useState(null)
+    const [isLoadingSelectedTokenToAverage, setIsLoadingSelectedTokenToAverage] = useState(true)
 
 
     // Wagmi hooks for... (https://wagmi.sh/react/getting-started)
     // -----------------------------------------------------------------------------------------------------------------
     // ...accessing account data and connection status.
     const { address, isConnected } = useAccount()
-    // // ...accessing Client's ethers Provider.
+    // ...accessing Client's ethers Provider.
     const provider = useProvider()
 
 
@@ -63,25 +75,59 @@ export function AveragingStrategiesForm() {
 
     // ChakraProvider
     // -----------------------------------------------------------------------------------------------------------------
-    const [input, setInput] = useState("")
-    const handleInputChange = (e) => setInput(e.target.value)
-    const isError = input === ""
+    const handleSelectedTokenToAverageChange = (event) => {
+        setIsLoadingSelectedTokenToAverage(true)
+        setSelectedTokenToAverage(
+            supportedTokens.find(token => token.address === event.target.value)
+        )
+    }
 
-
-    // Variables
-    // -----------------------------------------------------------------------------------------------------------------
 
 
     // `useEffect`s
     // -------------------------------------------------------------------------------------------------------------------
-    // Calls 'getEvents()' whenever the users:
+    // Openocean API/SDK integration
+    // Dynamically imported according to option 1 (of 3): https://stackoverflow.com/questions/66096260/why-am-i-getting-referenceerror-self-is-not-defined-when-i-import-a-client-side
+    // The error occurs because the library requires Web APIs to work, which are not available when Next.js pre-renders the page on the server-side.
+    // In your case, `openocean` tries to access the window object which is not present on the server.
+    // To fix it, you have to dynamically import `openocean` so it only gets loaded on the client-side.
+    useEffect(() => {
+        const initOpenocean = async () => {
+            const { OpenoceanApiSdk } = await import('@openocean.finance/api')
+            const openoceanApiSdk = new OpenoceanApiSdk()
+            const { api, swapSdk, config } = openoceanApiSdk
+
+            // Gets all the available tokens OpenOcean has on `eth`...
+            const getAvailableTokens = async () => {
+                api.getTokenList({
+                    chain: 'eth',
+                }).then((data) => {
+                    // ...but saves only the surpported by AIO ones
+                    const filteredArray = data.data.filter(token => SUPPORTED_TOKENS.includes(token.symbol));
+                    setSupportedTokens(filteredArray)
+                }).catch((error) => {
+                    console.error(error)
+                    return
+                });
+            }
+            getAvailableTokens()
+        }
+        initOpenocean()
+    }, [])
+
+    // Gets the mock DAI balance whenever the users:
     // - connect their wallet to the Dapp (isConnected)
     // - change the account in their wallet (address)
-    useEffect(() => {
-        if (isConnected) {
-            getMockDaiBalance()
-        }
-    }, [isConnected, address])
+    useEffect(() => {if (isConnected) {getMockDaiBalance()}}, [isConnected, address])
+    // Sets the selected source token whenever its information (supportedTokens) is fully set
+    useEffect(() => {if (isConnected) {setSelectedSourceToken   (supportedTokens.find(token => token.symbol === "DAI" ))}}, [supportedTokens])
+    // Sets the selected token to average whenever its information (supportedTokens) is fully set
+    useEffect(() => {if (isConnected) {setSelectedTokenToAverage(supportedTokens.find(token => token.symbol === "WBTC"))}}, [supportedTokens])
+    // Sets to false the corresponding loading status of the selected source token whenever it (selectedSourceToken) is fully set
+    useEffect(() => {if (isConnected && selectedSourceToken   ) {setIsLoadingSelectedSourceToken   (false)}}, [selectedSourceToken])
+    // Sets to false the corresponding loading status of the selected token to average whenever it (selectedTokenToAverage) is fully set
+    useEffect(() => {if (isConnected && selectedTokenToAverage) {setIsLoadingSelectedTokenToAverage(false)}}, [selectedTokenToAverage])
+
 
     // Functions
     // -----------------------------------------------------------------------------------------------------------------
@@ -96,7 +142,7 @@ export function AveragingStrategiesForm() {
     // HTML content
     // -----------------------------------------------------------------------------------------------------------------
     return (
-        <Card maxW="xs">
+        <Card maxW="sm">
             <FormControl>
 
                 <CardHeader align="center" pb="0">
@@ -107,22 +153,46 @@ export function AveragingStrategiesForm() {
                     <VStack spacing="1.5rem" align="stretch">
                         <VStack spacing="0rem" align="stretch">
                             <FormLabel>Source token</FormLabel>
-                            <HStack spacing="24px">
-                                <Avatar name="mock DAI" bg='yellow.500'/>
-                                <Text>mock DAI {mockDaiBalance}</Text>
+                            <HStack>
+                                <Card p="0.5rem">
+                                    <HStack>
+                                        <SkeletonCircle isLoaded={!isLoadingSelectedSourceToken}>
+                                            <Avatar
+                                                size="sm"
+                                                name={selectedSourceToken ? selectedSourceToken.symbol : ''}
+                                                src={selectedSourceToken ? selectedSourceToken.icon : ''}
+                                            />
+                                        </SkeletonCircle>
+                                        <Text>{mockDaiBalance} mDAI</Text>
+                                    </HStack>
+                                </Card>
+                                <Card p="0.5rem">
+                                    <HStack>
+                                        <Avatar
+                                            size="sm"
+                                            name='?'
+                                        />
+                                        <Text fontSize="sm">More coming soon!</Text>
+                                    </HStack>
+                                </Card>
                             </HStack>
                         </VStack>
                         <VStack spacing="0rem" align="stretch">
                             <FormLabel>Token to average</FormLabel>
-                            <HStack spacing="24px">
-                                <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
-                                <Input type="email" value={input} onChange={handleInputChange} />
+                            <HStack>
+                                <SkeletonCircle isLoaded={!isLoadingSelectedTokenToAverage}>
+                                    <Avatar
+                                        size="sm"
+                                        name={selectedTokenToAverage ? selectedTokenToAverage.symbol : ''}
+                                        src={selectedTokenToAverage ? selectedTokenToAverage.icon : ''}
+                                    />
+                                </SkeletonCircle>
+                                <Select value={selectedTokenToAverage ? selectedTokenToAverage.address : ''} onChange={handleSelectedTokenToAverageChange}>
+                                    {supportedTokens.slice(1).map(token =>
+                                        <option key={token.address} value={token.address}>{token.name}</option>
+                                    )}
+                                </Select>
                             </HStack>
-                            {!isError ? (
-                                <FormHelperText>Enter the token you would like to average.</FormHelperText>
-                            ) : (
-                                <FormErrorMessage>Token is required.</FormErrorMessage>
-                            )}
                         </VStack>
                         <VStack spacing="0rem" align="stretch">
                             <FormLabel>Averaging amount</FormLabel>
