@@ -75,6 +75,13 @@ export function AveragingStrategiesForm() {
 
     // ChakraProvider
     // -----------------------------------------------------------------------------------------------------------------
+    const handleSelectedTokenToAverageChange = (event) => {
+        setIsLoadingSelectedTokenToAverage(true)
+        setSelectedTokenToAverage(
+            supportedTokens.find(token => token.address === event.target.value)
+        )
+    }
+
 
 
     // `useEffect`s
@@ -150,10 +157,11 @@ export function AveragingStrategiesForm() {
                                 <Card p="0.5rem">
                                     <HStack>
                                         <SkeletonCircle size='10' isLoaded={!isLoadingSelectedSourceToken}>
-                                            <Avatar size="sm"
+                                            <Avatar
+                                                size="sm"
                                                 name={selectedSourceToken ? selectedSourceToken.symbol : ''}
                                                 src={selectedSourceToken ? selectedSourceToken.icon : ''}
-                                                />
+                                            />
                                         </SkeletonCircle>
                                         <Text>{mockDaiBalance} mDAI</Text>
                                     </HStack>
@@ -165,15 +173,16 @@ export function AveragingStrategiesForm() {
                             <FormLabel>Token to average</FormLabel>
                             <HStack>
                                 <SkeletonCircle size='10' isLoaded={!isLoadingSelectedTokenToAverage}>
-                                    <Avatar size="sm"
+                                    <Avatar
+                                        size="sm"
                                         name={selectedTokenToAverage ? selectedTokenToAverage.symbol : ''}
                                         src={selectedTokenToAverage ? selectedTokenToAverage.icon : ''}
-                                        />
+                                    />
                                 </SkeletonCircle>
-                                <Select placeholder='Select option'>
-                                {supportedTokens.slice(1).map(token =>
-                                    <option key={token.address} value={token.address}>{token.symbol}</option>
-                                )}
+                                <Select value={selectedTokenToAverage ? selectedTokenToAverage.address : ''} onChange={handleSelectedTokenToAverageChange}>
+                                    {supportedTokens.slice(1).map(token =>
+                                        <option key={token.address} value={token.address}>{token.name}</option>
+                                    )}
                                 </Select>
                             </HStack>
                         </VStack>
