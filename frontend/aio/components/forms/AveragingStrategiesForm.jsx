@@ -142,7 +142,7 @@ export function AveragingStrategiesForm() {
     // HTML content
     // -----------------------------------------------------------------------------------------------------------------
     return (
-        <Card maxW="xs">
+        <Card maxW="sm">
             <FormControl>
 
                 <CardHeader align="center" pb="0">
@@ -156,7 +156,7 @@ export function AveragingStrategiesForm() {
                             <HStack>
                                 <Card p="0.5rem">
                                     <HStack>
-                                        <SkeletonCircle size='10' isLoaded={!isLoadingSelectedSourceToken}>
+                                        <SkeletonCircle isLoaded={!isLoadingSelectedSourceToken}>
                                             <Avatar
                                                 size="sm"
                                                 name={selectedSourceToken ? selectedSourceToken.symbol : ''}
@@ -166,13 +166,21 @@ export function AveragingStrategiesForm() {
                                         <Text>{mockDaiBalance} mDAI</Text>
                                     </HStack>
                                 </Card>
-                                <Text fontSize="xs">More coming soon!</Text>
+                                <Card p="0.5rem">
+                                    <HStack>
+                                        <Avatar
+                                            size="sm"
+                                            name='?'
+                                        />
+                                        <Text fontSize="sm">More coming soon!</Text>
+                                    </HStack>
+                                </Card>
                             </HStack>
                         </VStack>
                         <VStack spacing="0rem" align="stretch">
                             <FormLabel>Token to average</FormLabel>
                             <HStack>
-                                <SkeletonCircle size='10' isLoaded={!isLoadingSelectedTokenToAverage}>
+                                <SkeletonCircle isLoaded={!isLoadingSelectedTokenToAverage}>
                                     <Avatar
                                         size="sm"
                                         name={selectedTokenToAverage ? selectedTokenToAverage.symbol : ''}
