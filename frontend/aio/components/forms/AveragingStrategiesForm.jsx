@@ -32,6 +32,8 @@ import { Switch } from '@chakra-ui/react'
 import { Button, ButtonGroup } from '@chakra-ui/react'
 // Component & Dapp
 import MockDaiTokenContract from 'public/MockDaiToken.json'
+// Openocean API/SDK integation
+// Must be done dynamically with useEffect after Next.js pre-renders
 
 
 export function AveragingStrategiesForm() {
@@ -39,12 +41,14 @@ export function AveragingStrategiesForm() {
     // -----------------------------------------------------------------------------------------------------------------
     // Addresses
     const MOCK_DAI_CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    const SUPPORTED_TOKENS = ["1INCH", "AAVE", "AXS", "CRV", , , , , , , , , , ,];
 
 
-    // // States for...
-    // // -----------------------------------------------------------------------------------------------------------------
-    // // ...the mockDAI balance
+    // States for...
+    // -----------------------------------------------------------------------------------------------------------------
+    // ...the mockDAI balance
     const [mockDaiBalance, setMockDaiBalance] = useState("?")
+    const [availableTokens, setAvailableTokens] = useState(null)
 
 
     // Wagmi hooks for... (https://wagmi.sh/react/getting-started)
@@ -68,12 +72,39 @@ export function AveragingStrategiesForm() {
     const isError = input === ""
 
 
-    // Variables
-    // -----------------------------------------------------------------------------------------------------------------
-
-
     // `useEffect`s
     // -------------------------------------------------------------------------------------------------------------------
+    // Openocean API/SDK integration
+    // Dynamically imported according to option 1 (of 3): https://stackoverflow.com/questions/66096260/why-am-i-getting-referenceerror-self-is-not-defined-when-i-import-a-client-side
+    // The error occurs because the library requires Web APIs to work, which are not available when Next.js pre-renders the page on the server-side.
+    // In your case, `openocean` tries to access the window object which is not present on the server.
+    // To fix it, you have to dynamically import `openocean` so it only gets loaded on the client-side.
+    useEffect(() => {
+        const initOpenocean = async () => {
+            const { OpenoceanApiSdk } = await import('@openocean.finance/api')
+            const openoceanApiSdk = new OpenoceanApiSdk()
+            const { api, swapSdk, config } = openoceanApiSdk
+
+            // Gets all the available tokens we have on Goerli
+            const getAvailableTokens = async () => {
+                api.getTokenList({
+                    chain: 'eth',
+                }).then((data) => {
+                    const filteredArray = data.data.filter(token => SUPPORTED_TOKENS.includes(token.symbol));
+                    console.log(filteredArray)
+                    setAvailableTokens(filteredArray)
+                }).catch((error) => {
+                    console.error(error)
+                    return
+                });
+            }
+
+            getAvailableTokens()
+        }
+
+        initOpenocean()
+    }, [])
+
     // Calls 'getEvents()' whenever the users:
     // - connect their wallet to the Dapp (isConnected)
     // - change the account in their wallet (address)
