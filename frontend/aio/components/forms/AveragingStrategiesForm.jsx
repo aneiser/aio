@@ -57,6 +57,8 @@ export function AveragingStrategiesForm() {
     // ...the selected token to average and its loading
     const [selectedTokenToAverage, setSelectedTokenToAverage] = useState(null)
     const [isLoadingSelectedTokenToAverage, setIsLoadingSelectedTokenToAverage] = useState(true)
+    // ...the selected initial status
+    const [selectedInitialStatus, setSelectedInitialStatus] = useState(true)
 
 
     // Wagmi hooks for... (https://wagmi.sh/react/getting-started)
@@ -81,7 +83,6 @@ export function AveragingStrategiesForm() {
             supportedTokens.find(token => token.address === event.target.value)
         )
     }
-
 
 
     // `useEffect`s
@@ -222,10 +223,14 @@ export function AveragingStrategiesForm() {
                                 </Select>
                             </HStack>
                         </VStack>
-                        <HStack spacing="1rem" align="stretch">
-                            <Switch id="initial-status" />
-                            <FormLabel htmlFor="initial-status">Initialy {true ? `active` : `inactive`}</FormLabel>
-                        </HStack>
+                        <FormControl alignItems='center' justifyContent="space-between" display='flex'>
+                            <FormLabel htmlFor="initial-status" mb='0'>{selectedInitialStatus ? `Active` : `Inactive`} on creation</FormLabel>
+                            <Switch
+                                id="initial-status"
+                                isChecked={selectedInitialStatus}
+                                onChange={(e) => setSelectedInitialStatus(e.target.checked)}
+                                />
+                        </FormControl>
                     </VStack>
                 </CardBody>
 
