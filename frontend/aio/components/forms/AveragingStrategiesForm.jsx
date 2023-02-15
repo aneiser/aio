@@ -78,7 +78,7 @@ export function AveragingStrategiesForm() {
     // ...the selected amount, in dollar pegged stablecoin, to buy each time
     const [selectedAmount, setSelectedAmount] = useState(MIN_SOURCE_UNIT_VALUE)
     // ...the selected frequency amount and frequency unit to buy
-    const [selectedFrequencyAmount, setSelectedFrequencyAmount] = useState(MIN_FREQUENCY_VALUE)
+    const [selectedFrequency, setSelectedFrequency] = useState(MIN_FREQUENCY_VALUE)
     const [maxFrequencyValue, setMaxFrequencyValue] = useState(MAX_FREQUENCY_VALUE_FOR_WEEK_UNIT)
     const [selectedFrequencyUnit, setSelectedFrequencyUnit] = useState(DEFAULT_FREQUENCY_UNIT)
     // ...the selected initial status
@@ -124,11 +124,10 @@ export function AveragingStrategiesForm() {
         const maxFrequencyValue = maxFrequencyValues[value];
 
         setMaxFrequencyValue(maxFrequencyValue);
-        if (selectedFrequencyAmount > maxFrequencyValue) {
-            setSelectedFrequencyAmount(maxFrequencyValue);
+        if (selectedFrequency > maxFrequencyValue) {
+            setSelectedFrequency(maxFrequencyValue);
         }
     }
-
 
 
     // `useEffect`s
@@ -263,8 +262,8 @@ export function AveragingStrategiesForm() {
                                 <NumberInput
                                     min={MIN_FREQUENCY_VALUE}
                                     max={maxFrequencyValue}
-                                    value={selectedFrequencyAmount}
-                                    onChange={value => setSelectedFrequencyAmount(Number(value))}
+                                    value={selectedFrequency}
+                                    onChange={value => setSelectedFrequency(Number(value))}
                                     allowMouseWheel
                                 >
                                     <NumberInputField />
