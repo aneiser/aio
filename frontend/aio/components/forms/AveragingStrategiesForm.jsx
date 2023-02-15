@@ -107,45 +107,28 @@ export function AveragingStrategiesForm() {
             supportedTokens.find(token => token.address === event.target.value)
         )
     }
-    const handleSelectedFrequencyUnitChange = (event) => {
-        setSelectedFrequencyUnit(event.target.value)
 
-        switch(event.target.value) {
-            case SECOND_UNIT:
-            case MINUTE_UNIT:
-                setMaxFrequencyValue(MAX_FREQUENCY_VALUE_FOR_SECOND_MINUTE_UNIT)
-                if (selectedFrequencyAmount > MAX_FREQUENCY_VALUE_FOR_SECOND_MINUTE_UNIT) {
-                    setSelectedFrequencyAmount(MAX_FREQUENCY_VALUE_FOR_SECOND_MINUTE_UNIT)
-                }
-                break;
-            case HOUR_UNIT:
-                setMaxFrequencyValue(MAX_FREQUENCY_VALUE_FOR_HOUR_UNIT)
-                if (selectedFrequencyAmount > MAX_FREQUENCY_VALUE_FOR_HOUR_UNIT) {
-                    setSelectedFrequencyAmount(MAX_FREQUENCY_VALUE_FOR_HOUR_UNIT)
-                }
-                break;
-            case DAY_UNIT:
-                setMaxFrequencyValue(MAX_FREQUENCY_VALUE_FOR_DAY_UNIT)
-                if (selectedFrequencyAmount > MAX_FREQUENCY_VALUE_FOR_DAY_UNIT) {
-                    setSelectedFrequencyAmount(MAX_FREQUENCY_VALUE_FOR_DAY_UNIT)
-                }
-                break;
-            case WEEK_UNIT:
-                setMaxFrequencyValue(MAX_FREQUENCY_VALUE_FOR_WEEK_UNIT)
-                if (selectedFrequencyAmount > MAX_FREQUENCY_VALUE_FOR_WEEK_UNIT) {
-                    setSelectedFrequencyAmount(MAX_FREQUENCY_VALUE_FOR_WEEK_UNIT)
-                }
-                break;
-            case MONTH_UNIT: // Not natively supported by Solidity
-                setMaxFrequencyValue(MAX_FREQUENCY_VALUE_FOR_MONTH_UNIT)
-                if (selectedFrequencyAmount > MAX_FREQUENCY_VALUE_FOR_MONTH_UNIT) {
-                    setSelectedFrequencyAmount(MAX_FREQUENCY_VALUE_FOR_MONTH_UNIT)
-                }
-                break;
-            default:
-                break;
+    const handleSelectedFrequencyUnitChange = (event) => {
+        const { value } = event.target;
+        setSelectedFrequencyUnit(value);
+
+        const maxFrequencyValues = {
+            [SECOND_UNIT]: MAX_FREQUENCY_VALUE_FOR_SECOND_MINUTE_UNIT,
+            [MINUTE_UNIT]: MAX_FREQUENCY_VALUE_FOR_SECOND_MINUTE_UNIT,
+            [HOUR_UNIT]: MAX_FREQUENCY_VALUE_FOR_HOUR_UNIT,
+            [DAY_UNIT]: MAX_FREQUENCY_VALUE_FOR_DAY_UNIT,
+            [WEEK_UNIT]: MAX_FREQUENCY_VALUE_FOR_WEEK_UNIT,
+            [MONTH_UNIT]: MAX_FREQUENCY_VALUE_FOR_MONTH_UNIT,
+        };
+
+        const maxFrequencyValue = maxFrequencyValues[value];
+
+        setMaxFrequencyValue(maxFrequencyValue);
+        if (selectedFrequencyAmount > maxFrequencyValue) {
+            setSelectedFrequencyAmount(maxFrequencyValue);
         }
     }
+
 
 
     // `useEffect`s
