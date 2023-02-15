@@ -43,6 +43,8 @@ export function AveragingStrategiesForm() {
     // Addresses
     const MOCK_DAI_CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
     const SUPPORTED_TOKENS = ["DAI", "1INCH", "AAVE", "AXS", "CRV", "LINK", "MANA", "MATIC", "MKR", "SHIB", "SUSHI", "UNI", "YFI", "WETH", "WBTC", "SAND"];
+    const MIN_SOURCE_UNIT_VALUE = 1
+    const MAX_SOURCE_UNIT_VALUE = 1000
 
 
     // States for...
@@ -57,6 +59,8 @@ export function AveragingStrategiesForm() {
     // ...the selected token to average and its loading
     const [selectedTokenToAverage, setSelectedTokenToAverage] = useState(null)
     const [isLoadingSelectedTokenToAverage, setIsLoadingSelectedTokenToAverage] = useState(true)
+    // ...the selected amount, in dollar pegged stablecoin, to buy each time
+    const [selectedAmount, setSelectedAmount] = useState(MIN_SOURCE_UNIT_VALUE)
     // ...the selected initial status
     const [selectedInitialStatus, setSelectedInitialStatus] = useState(true)
 
@@ -197,7 +201,13 @@ export function AveragingStrategiesForm() {
                         </VStack>
                         <VStack spacing="0rem" align="stretch">
                             <FormLabel>Averaging amount</FormLabel>
-                            <NumberInput min={1} max={1000000}>
+                            <NumberInput
+                                allowMouseWheel
+                                max={MAX_SOURCE_UNIT_VALUE}
+                                min={MIN_SOURCE_UNIT_VALUE}
+                                onChange={value => setSelectedAmount(Number(value))}
+                                value={selectedAmount}
+                            >
                                 <NumberInputField />
                                 <NumberInputStepper>
                                     <NumberIncrementStepper />
