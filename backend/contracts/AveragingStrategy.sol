@@ -4,74 +4,74 @@ pragma solidity 0.8.17;
 contract AveragingStrategy {
 
     // Variables
-    struct AverageConfig {
-        string tokenName;
+    struct AveragingStrategyConfig {
+        address sourceToken;
         bool isActive;
         uint amount;
         uint frequency;
     }
 
-    mapping (address => AverageConfig) tokensToAverage;
+    mapping (address => AveragingStrategyConfig) averagingStrategiesList;
 
 
     //  Events
-    event AveragingStrategyCreated          (address tokenAddress, string tokenName, bool isActive, uint amount, uint frequency);
-    event StatusAveragingStrategyUpdated    (address tokenAddress,                   bool isActive);
-    event AmountAveragingStrategyUpdated   (address tokenAddress,                                  uint amount);
-    event FrequencyAveragingStrategyUpdated (address tokenAddress,                                                uint frequency);
-    event AveragingStrategyUpdated          (address tokenAddress,                   bool isActive, uint amount, uint frequency);
+    event AveragingStrategyCreated          (address tokenAddress, address sourceToken, bool isActive, uint amount, uint frequency);
+    event StatusAveragingStrategyUpdated    (address tokenAddress,                      bool isActive);
+    event AmountAveragingStrategyUpdated    (address tokenAddress,                                     uint amount);
+    event FrequencyAveragingStrategyUpdated (address tokenAddress,                                                  uint frequency);
+    event AveragingStrategyUpdated          (address tokenAddress,                      bool isActive, uint amount, uint frequency);
     event AveragingStrategyDeleted          (address tokenAddress);
 
 
     // Functions
     // CRUD functions
     // Create
-    function createAveragingStrategy(address _tokenAddress, string memory _tokenName, bool _isActive, uint _amount, uint _frequency) public {
-        tokensToAverage[_tokenAddress].tokenName = _tokenName;
-        tokensToAverage[_tokenAddress].isActive = _isActive;
-        tokensToAverage[_tokenAddress].amount = _amount;
-        tokensToAverage[_tokenAddress].frequency = _frequency;
+    function createAveragingStrategy(address _averagedToken, address _sourceToken, bool _isActive, uint _amount, uint _frequency) public {
+        averagingStrategiesList[_averagedToken].sourceToken = _sourceToken;
+        averagingStrategiesList[_averagedToken].isActive = _isActive;
+        averagingStrategiesList[_averagedToken].amount = _amount;
+        averagingStrategiesList[_averagedToken].frequency = _frequency;
 
-        emit AveragingStrategyCreated(_tokenAddress,  _tokenName, _isActive, _amount, _frequency);
+        emit AveragingStrategyCreated(_averagedToken,  _sourceToken, _isActive, _amount, _frequency);
     }
 
     // Read
-    function readAveragingStrategy(address _tokenAddress) external view returns (AverageConfig memory) {
-        return tokensToAverage[_tokenAddress];
+    function readAveragingStrategy(address _averagedToken) external view returns (AveragingStrategyConfig memory) {
+        return averagingStrategiesList[_averagedToken];
     }
 
     // Update
-    function updateStatusAveragingStrategy(address _tokenAddress) public {
-        tokensToAverage[_tokenAddress].isActive = !tokensToAverage[_tokenAddress].isActive;
+    function updateStatusAveragingStrategy(address _averagedToken) public {
+        averagingStrategiesList[_averagedToken].isActive = !averagingStrategiesList[_averagedToken].isActive;
 
-        emit StatusAveragingStrategyUpdated(_tokenAddress, tokensToAverage[_tokenAddress].isActive);
+        emit StatusAveragingStrategyUpdated(_averagedToken, averagingStrategiesList[_averagedToken].isActive);
     }
 
-    function updateAmountAveragingStrategy(address _tokenAddress, uint _amount) public {
-        tokensToAverage[_tokenAddress].amount = _amount;
+    function updateAmountAveragingStrategy(address _averagedToken, uint _amount) public {
+        averagingStrategiesList[_averagedToken].amount = _amount;
 
-        emit AmountAveragingStrategyUpdated(_tokenAddress, _amount);
+        emit AmountAveragingStrategyUpdated(_averagedToken, _amount);
     }
 
-    function updateFrequencyAveragingStrategy(address _tokenAddress, uint _frequency) public {
-        tokensToAverage[_tokenAddress].frequency = _frequency;
+    function updateFrequencyAveragingStrategy(address _averagedToken, uint _frequency) public {
+        averagingStrategiesList[_averagedToken].frequency = _frequency;
 
-        emit FrequencyAveragingStrategyUpdated(_tokenAddress, _frequency);
+        emit FrequencyAveragingStrategyUpdated(_averagedToken, _frequency);
     }
 
-    function updateAveragingStrategy(address _tokenAddress, bool _isActive, uint _amount, uint _frequency) public {
-        tokensToAverage[_tokenAddress].isActive = _isActive;
-        tokensToAverage[_tokenAddress].amount = _amount;
-        tokensToAverage[_tokenAddress].frequency = _frequency;
+    function updateAveragingStrategy(address _averagedToken, bool _isActive, uint _amount, uint _frequency) public {
+        averagingStrategiesList[_averagedToken].isActive = _isActive;
+        averagingStrategiesList[_averagedToken].amount = _amount;
+        averagingStrategiesList[_averagedToken].frequency = _frequency;
 
-        emit AveragingStrategyUpdated(_tokenAddress, _isActive, _amount, _frequency);
+        emit AveragingStrategyUpdated(_averagedToken, _isActive, _amount, _frequency);
     }
 
     // Delete
-    function deleteAveragingStrategy(address _tokenAddress) public {
-        delete tokensToAverage[_tokenAddress];
+    function deleteAveragingStrategy(address _averagedToken) public {
+        delete averagingStrategiesList[_averagedToken];
 
-        emit AveragingStrategyDeleted(_tokenAddress);
+        emit AveragingStrategyDeleted(_averagedToken);
     }
 
 }
