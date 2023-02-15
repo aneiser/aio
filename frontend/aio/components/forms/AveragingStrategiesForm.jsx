@@ -42,9 +42,25 @@ export function AveragingStrategiesForm() {
     // -----------------------------------------------------------------------------------------------------------------
     // Addresses
     const MOCK_DAI_CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    // Supported tokens by AIO
     const SUPPORTED_TOKENS = ["DAI", "1INCH", "AAVE", "AXS", "CRV", "LINK", "MANA", "MATIC", "MKR", "SHIB", "SUSHI", "UNI", "YFI", "WETH", "WBTC", "SAND"];
+    // Source amount values
     const MIN_SOURCE_UNIT_VALUE = 1
     const MAX_SOURCE_UNIT_VALUE = 1000
+    // Frequency names and values
+    const SECOND_UNIT= "Seconds"
+    const MINUTE_UNIT= "Minutes"
+    const HOUR_UNIT= "Hours"
+    const DAY_UNIT= "Days"
+    const WEEK_UNIT= "Weeks"
+    const MONTH_UNIT= "Months" // Not natively supported by Solidity
+    const MIN_FREQUENCY_VALUE = 1
+    const MAX_FREQUENCY_VALUE_FOR_SECOND_MINUTE_UNIT = 60
+    const MAX_FREQUENCY_VALUE_FOR_HOUR_UNIT = 24
+    const MAX_FREQUENCY_VALUE_FOR_DAY_UNIT = 30
+    const MAX_FREQUENCY_VALUE_FOR_WEEK_UNIT = 4
+    const MAX_FREQUENCY_VALUE_FOR_MONTH_UNIT = 12 // Not natively supported by Solidity
+    const DEFAULT_FREQUENCY_UNIT = "Weeks"
 
 
     // States for...
@@ -61,6 +77,10 @@ export function AveragingStrategiesForm() {
     const [isLoadingSelectedTokenToAverage, setIsLoadingSelectedTokenToAverage] = useState(true)
     // ...the selected amount, in dollar pegged stablecoin, to buy each time
     const [selectedAmount, setSelectedAmount] = useState(MIN_SOURCE_UNIT_VALUE)
+    // ...the selected frequency amount and frequency unit to buy
+    const [selectedFrequencyAmount, setSelectedFrequencyAmount] = useState(MIN_FREQUENCY_VALUE)
+    const [maxFrequencyValue, setMaxFrequencyValue] = useState(MAX_FREQUENCY_VALUE_FOR_WEEK_UNIT)
+    const [selectedFrequencyUnit, setSelectedFrequencyUnit] = useState(DEFAULT_FREQUENCY_UNIT)
     // ...the selected initial status
     const [selectedInitialStatus, setSelectedInitialStatus] = useState(true)
 
@@ -86,6 +106,45 @@ export function AveragingStrategiesForm() {
         setSelectedTokenToAverage(
             supportedTokens.find(token => token.address === event.target.value)
         )
+    }
+    const handleSelectedFrequencyUnitChange = (event) => {
+        setSelectedFrequencyUnit(event.target.value)
+
+        switch(event.target.value) {
+            case SECOND_UNIT:
+            case MINUTE_UNIT:
+                setMaxFrequencyValue(MAX_FREQUENCY_VALUE_FOR_SECOND_MINUTE_UNIT)
+                if (selectedFrequencyAmount > MAX_FREQUENCY_VALUE_FOR_SECOND_MINUTE_UNIT) {
+                    setSelectedFrequencyAmount(MAX_FREQUENCY_VALUE_FOR_SECOND_MINUTE_UNIT)
+                }
+                break;
+            case HOUR_UNIT:
+                setMaxFrequencyValue(MAX_FREQUENCY_VALUE_FOR_HOUR_UNIT)
+                if (selectedFrequencyAmount > MAX_FREQUENCY_VALUE_FOR_HOUR_UNIT) {
+                    setSelectedFrequencyAmount(MAX_FREQUENCY_VALUE_FOR_HOUR_UNIT)
+                }
+                break;
+            case DAY_UNIT:
+                setMaxFrequencyValue(MAX_FREQUENCY_VALUE_FOR_DAY_UNIT)
+                if (selectedFrequencyAmount > MAX_FREQUENCY_VALUE_FOR_DAY_UNIT) {
+                    setSelectedFrequencyAmount(MAX_FREQUENCY_VALUE_FOR_DAY_UNIT)
+                }
+                break;
+            case WEEK_UNIT:
+                setMaxFrequencyValue(MAX_FREQUENCY_VALUE_FOR_WEEK_UNIT)
+                if (selectedFrequencyAmount > MAX_FREQUENCY_VALUE_FOR_WEEK_UNIT) {
+                    setSelectedFrequencyAmount(MAX_FREQUENCY_VALUE_FOR_WEEK_UNIT)
+                }
+                break;
+            case MONTH_UNIT: // Not natively supported by Solidity
+                setMaxFrequencyValue(MAX_FREQUENCY_VALUE_FOR_MONTH_UNIT)
+                if (selectedFrequencyAmount > MAX_FREQUENCY_VALUE_FOR_MONTH_UNIT) {
+                    setSelectedFrequencyAmount(MAX_FREQUENCY_VALUE_FOR_MONTH_UNIT)
+                }
+                break;
+            default:
+                break;
+        }
     }
 
 
@@ -218,18 +277,27 @@ export function AveragingStrategiesForm() {
                         <VStack spacing="0rem" align="stretch">
                             <FormLabel>Averaging interval</FormLabel>
                             <HStack>
-                                <NumberInput min={1} max={1000000}>
+                                <NumberInput
+                                    min={MIN_FREQUENCY_VALUE}
+                                    max={maxFrequencyValue}
+                                    value={selectedFrequencyAmount}
+                                    onChange={value => setSelectedFrequencyAmount(Number(value))}
+                                    allowMouseWheel
+                                >
                                     <NumberInputField />
                                     <NumberInputStepper>
                                         <NumberIncrementStepper />
                                         <NumberDecrementStepper />
                                     </NumberInputStepper>
                                 </NumberInput>
-                                <Select defaultValue="Weeks">
-                                    <option value="Hours">Hours</option>
-                                    <option value="Days">Days</option>
-                                    <option value="Weeks">Weeks</option>
-                                    <option value="Months">Months</option>
+                                <Select value={selectedFrequencyUnit} onChange={handleSelectedFrequencyUnitChange}>
+                                    {/* setSelectedFrequencyUnit */}
+                                    <option value={SECOND_UNIT}>Seconds</option>
+                                    <option value={MINUTE_UNIT}>Minutes</option>
+                                    <option value={HOUR_UNIT}>Hours</option>
+                                    <option value={DAY_UNIT}>Days</option>
+                                    <option value={WEEK_UNIT}>Weeks</option>
+                                    <option value={MONTH_UNIT}>Months</option> {/* Not natively supported by Solidity */}
                                 </Select>
                             </HStack>
                         </VStack>
