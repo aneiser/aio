@@ -115,6 +115,23 @@ export function AveragingStrategiesTable() {
         }
     }
 
+    // Converts frequency data to seconds
+    const convertSecondsToFrequency = (seconds) => {
+        if (seconds < 60) {
+            return seconds + " " + "Second(s)"
+        } else if (seconds < 3600) {
+            return Math.floor(seconds / 60) + " " + "Minute(s)"
+        } else if (seconds < 86400) {
+            return Math.floor(seconds / 3600) + " " + "Hour(s)"
+        } else if (seconds < 604800) {
+            return Math.floor(seconds / 86400) + " " + "Day(s)"
+        } else if (seconds < 2592000) {
+            return Math.floor(seconds / 604800) + " " + "Week(s)"
+        } else {
+            return Math.floor(seconds / 2592000) + " " + "Month(s)"
+        }
+    };
+
 
     // HTML Content
     // -----------------------------------------------------------------------------------------------------------------
@@ -170,7 +187,7 @@ export function AveragingStrategiesTable() {
                             </HStack>
                         </Td>
                         <Td isNumeric>{strategy.amount}</Td>
-                        <Td isNumeric>{strategy.frequency}</Td>
+                        <Td isNumeric>{convertSecondsToFrequency(strategy.frequency)}</Td>
                         {/* <Td isNumeric>1600 $</Td>
                         <Td isNumeric>1300 $</Td>
                         <Td isNumeric>10 %</Td> */}
