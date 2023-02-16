@@ -65,6 +65,14 @@ export function AveragingStrategiesForm() {
     const MAX_FREQUENCY_VALUE_FOR_WEEK_UNIT = 4
     const MAX_FREQUENCY_VALUE_FOR_MONTH_UNIT = 12 // Not natively supported by Solidity
     const DEFAULT_FREQUENCY_UNIT = "Weeks"
+    const TIME_IN_SECONDS = {
+        Seconds: 1,
+        Minutes: 60,
+        Hours: 60 * 60,
+        Days: 24 * 60 * 60,
+        Weeks: 7 * 24 * 60 * 60,
+        Months: 30 * 24 * 60 * 60, // approximately 30 days per month
+    };
 
 
     // States for...
@@ -184,17 +192,17 @@ export function AveragingStrategiesForm() {
     // Gets the mock DAI balance whenever the users:
     // - connect their wallet to the Dapp (isConnected)
     // - change the account in their wallet (address)
-    useEffect(() => {if (isConnected) {getMockDaiBalance()}}, [isConnected, address])
+    useEffect(() => { if (isConnected) { getMockDaiBalance() } }, [isConnected, address])
     // Sets the selected source token whenever its information (supportedTokens) is fully set
-    useEffect(() => {if (isConnected) {setSelectedSourceToken(supportedTokens.find(token => token.symbol === "DAI"))}}, [supportedTokens])
+    useEffect(() => { if (isConnected) { setSelectedSourceToken(supportedTokens.find(token => token.symbol === "DAI")) } }, [supportedTokens])
     // Sets the selected token to average whenever its information (supportedTokens) is fully set
-    useEffect(() => {if (isConnected) {setSelectedTokenToAverage(supportedTokens.find(token => token.symbol === "WBTC"))}}, [supportedTokens])
+    useEffect(() => { if (isConnected) { setSelectedTokenToAverage(supportedTokens.find(token => token.symbol === "WBTC")) } }, [supportedTokens])
     // Sets to false the corresponding loading status of the selected source token whenever it (selectedSourceToken) is fully set
-    useEffect(() => {if (isConnected && selectedSourceToken) {setIsLoadingSelectedSourceToken(false)}}, [selectedSourceToken])
+    useEffect(() => { if (isConnected && selectedSourceToken) { setIsLoadingSelectedSourceToken(false) } }, [selectedSourceToken])
     // Sets to false the corresponding loading status of the selected token to average whenever it (selectedTokenToAverage) is fully set
-    useEffect(() => {if (isConnected && selectedTokenToAverage) {setIsLoadingSelectedTokenToAverage(false)}}, [selectedTokenToAverage])
+    useEffect(() => { if (isConnected && selectedTokenToAverage) { setIsLoadingSelectedTokenToAverage(false) } }, [selectedTokenToAverage])
     // Updates the newStrategy object whenever some of its fiels changes
-    useEffect(() => {if (isConnected) {updateNewStrategy()}}, [selectedSourceToken, selectedTokenToAverage, selectedAmount, selectedFrequency, selectedInitialStatus])
+    useEffect(() => { if (isConnected) { updateNewStrategy() } }, [selectedSourceToken, selectedTokenToAverage, selectedAmount, selectedFrequency, selectedInitialStatus, selectedFrequencyUnit])
 
 
     // Functions
@@ -206,13 +214,21 @@ export function AveragingStrategiesForm() {
         setMockDaiBalance(ethers.utils.formatEther(transaction.toString()))
     }
 
+    // Converts frequency data to seconds
+    const convertToSeconds = (value, unit) => {
+        const seconds = value * TIME_IN_SECONDS[unit];
+        return seconds;
+    };
+
     // Updates the new strategy object
     const updateNewStrategy = async () => {
+        let frequencyInSecs = convertToSeconds(selectedFrequency, selectedFrequencyUnit);
+
         setNewStrategy({
             sourceTokenAddress: selectedSourceToken ? selectedSourceToken.address : '',
             tokenToAverageAddress: selectedTokenToAverage ? selectedTokenToAverage.address : '',
             amount: selectedAmount,
-            frequency: selectedFrequency,
+            frequency: frequencyInSecs,
             initialStatus: selectedInitialStatus
         });
     }
