@@ -6,6 +6,7 @@ import { ethers } from 'ethers'
 // WagmiConfig
 import { useAccount } from 'wagmi'
 import { useProvider } from 'wagmi'
+import { useSigner } from 'wagmi'
 // RainbowKitProvider
 // ChakraProvider
 import { Card, CardHeader, CardBody, CardFooter } from '@chakra-ui/react'
@@ -31,8 +32,10 @@ import { Select } from '@chakra-ui/react'
 import { Switch } from '@chakra-ui/react'
 import { Button, ButtonGroup } from '@chakra-ui/react'
 import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
-// Component & Dapp
+import { useToast } from '@chakra-ui/react'
+// Components & Dapp contracts
 import MockDaiTokenContract from 'public/MockDaiToken.json'
+import AveragingStrategy from 'public/AveragingStrategy.json'
 // Openocean API/SDK integation
 // Must be done dynamically with useEffect after Next.js pre-renders
 
@@ -42,6 +45,7 @@ export function AveragingStrategiesForm() {
     // -----------------------------------------------------------------------------------------------------------------
     // Addresses
     const MOCK_DAI_CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    const AVERAGING_STRATEGY_CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
     // Supported tokens by AIO
     const SUPPORTED_TOKENS = ["DAI", "1INCH", "AAVE", "AXS", "CRV", "LINK", "MANA", "MATIC", "MKR", "SHIB", "SUSHI", "UNI", "YFI", "WETH", "WBTC", "SAND"];
     // Source amount values
@@ -83,6 +87,18 @@ export function AveragingStrategiesForm() {
     const [selectedFrequencyUnit, setSelectedFrequencyUnit] = useState(DEFAULT_FREQUENCY_UNIT)
     // ...the selected initial status
     const [selectedInitialStatus, setSelectedInitialStatus] = useState(true)
+    // ...the new strategy
+    const [newStrategy, setNewStrategy] = useState({
+        SourceToken: MOCK_DAI_CONTRACT_ADDRESS,
+        TokenToAverage: null,
+        Amount: 0,
+        Frequency: 0,
+        InitialStatus: true,
+    });
+    // ...the strategy list
+    const [strategiesList, setStrategiesList] = useState([])
+    // ...the waiting for the blockchain confirmation
+    const [waitingBlochainSignatureConfirmation, setWaitingBlochainSignatureConfirmation] = useState(false)
 
 
     // Wagmi hooks for... (https://wagmi.sh/react/getting-started)
@@ -91,6 +107,8 @@ export function AveragingStrategiesForm() {
     const { address, isConnected } = useAccount()
     // ...accessing Client's ethers Provider.
     const provider = useProvider()
+    // ...accessing ethers Signer object for connected account.
+    const { data: signer } = useSigner()
 
 
     // RainbowKit
@@ -101,6 +119,8 @@ export function AveragingStrategiesForm() {
 
     // ChakraProvider
     // -----------------------------------------------------------------------------------------------------------------
+    const toast = useToast()
+
     const handleSelectedTokenToAverageChange = (event) => {
         setIsLoadingSelectedTokenToAverage(true)
         setSelectedTokenToAverage(
@@ -166,13 +186,15 @@ export function AveragingStrategiesForm() {
     // - change the account in their wallet (address)
     useEffect(() => {if (isConnected) {getMockDaiBalance()}}, [isConnected, address])
     // Sets the selected source token whenever its information (supportedTokens) is fully set
-    useEffect(() => {if (isConnected) {setSelectedSourceToken   (supportedTokens.find(token => token.symbol === "DAI" ))}}, [supportedTokens])
+    useEffect(() => {if (isConnected) {setSelectedSourceToken(supportedTokens.find(token => token.symbol === "DAI"))}}, [supportedTokens])
     // Sets the selected token to average whenever its information (supportedTokens) is fully set
     useEffect(() => {if (isConnected) {setSelectedTokenToAverage(supportedTokens.find(token => token.symbol === "WBTC"))}}, [supportedTokens])
     // Sets to false the corresponding loading status of the selected source token whenever it (selectedSourceToken) is fully set
-    useEffect(() => {if (isConnected && selectedSourceToken   ) {setIsLoadingSelectedSourceToken   (false)}}, [selectedSourceToken])
+    useEffect(() => {if (isConnected && selectedSourceToken) {setIsLoadingSelectedSourceToken(false)}}, [selectedSourceToken])
     // Sets to false the corresponding loading status of the selected token to average whenever it (selectedTokenToAverage) is fully set
     useEffect(() => {if (isConnected && selectedTokenToAverage) {setIsLoadingSelectedTokenToAverage(false)}}, [selectedTokenToAverage])
+    // Updates the newStrategy object whenever some of its fiels changes
+    useEffect(() => {if (isConnected) {updateNewStrategy()}}, [selectedSourceToken, selectedTokenToAverage, selectedAmount, selectedFrequency, selectedInitialStatus])
 
 
     // Functions
@@ -182,6 +204,48 @@ export function AveragingStrategiesForm() {
         const contract = new ethers.Contract(MOCK_DAI_CONTRACT_ADDRESS, MockDaiTokenContract.abi, provider)
         let transaction = await contract.balanceOf(address)
         setMockDaiBalance(ethers.utils.formatEther(transaction.toString()))
+    }
+
+    // Updates the new strategy object
+    const updateNewStrategy = async () => {
+        setNewStrategy({
+            selectedSourceToken: selectedSourceToken ? selectedSourceToken.address : '',
+            selectedTokenToAverage: selectedTokenToAverage ? selectedTokenToAverage.address : '',
+            selectedAmount: selectedAmount,
+            selectedFrequency: selectedFrequency,
+            selectedInitialStatus: selectedInitialStatus
+        });
+    }
+
+    // Creates an averaging strategy
+    const createAveragingStrategy = async () => {
+        setWaitingBlochainSignatureConfirmation(true)
+
+        try {
+            const contract = new ethers.Contract(AVERAGING_STRATEGY_CONTRACT_ADDRESS, AveragingStrategy.abi, signer)
+            let transaction = await contract.createAveragingStrategy(selectedTokenToAverage.address, selectedSourceToken.address, selectedInitialStatus, selectedAmount, selectedFrequency)
+            await transaction.wait() // = wait(1)
+
+            setStrategiesList([...strategiesList, newStrategy])
+
+            setWaitingBlochainSignatureConfirmation(false)
+            toast({
+                title: `Strategy created ${selectedInitialStatus ? 'and activated' : ''}`,
+                description: selectedAmount + ' ' + selectedSourceToken.symbol + ' to ' + selectedTokenToAverage.symbol + ' each ' + selectedFrequency + ' ' + selectedFrequencyUnit,
+                status: 'success',
+                duration: 9000,
+                isClosable: true,
+            })
+        } catch (error) {
+            setWaitingBlochainSignatureConfirmation(false)
+            toast({
+                title: 'Error creating the strategy',
+                description: error.message,
+                status: 'error',
+                duration: 9000,
+                isClosable: true,
+            })
+        }
     }
 
 
@@ -273,7 +337,6 @@ export function AveragingStrategiesForm() {
                                     </NumberInputStepper>
                                 </NumberInput>
                                 <Select value={selectedFrequencyUnit} onChange={handleSelectedFrequencyUnitChange}>
-                                    {/* setSelectedFrequencyUnit */}
                                     <option value={SECOND_UNIT}>Seconds</option>
                                     <option value={MINUTE_UNIT}>Minutes</option>
                                     <option value={HOUR_UNIT}>Hours</option>
@@ -295,7 +358,14 @@ export function AveragingStrategiesForm() {
                 </CardBody>
 
                 <CardFooter>
-                    <Button width="100%" isLoading loadingText="Waiting confirmation" colorScheme="teal" variant="outline">Create strategy</Button>
+                    <Button
+                        isLoading={waitingBlochainSignatureConfirmation}
+                        loadingText="Waiting confirmation"
+                        onClick={() => createAveragingStrategy()}
+                        width="100%"
+                    >
+                        Create strategy
+                    </Button>
                 </CardFooter>
 
             </FormControl>
