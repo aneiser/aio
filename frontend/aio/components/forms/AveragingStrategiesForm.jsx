@@ -89,11 +89,11 @@ export function AveragingStrategiesForm() {
     const [selectedInitialStatus, setSelectedInitialStatus] = useState(true)
     // ...the new strategy
     const [newStrategy, setNewStrategy] = useState({
-        SourceToken: MOCK_DAI_CONTRACT_ADDRESS,
-        TokenToAverage: null,
-        Amount: 0,
-        Frequency: 0,
-        InitialStatus: true,
+        sourceTokenAddress: MOCK_DAI_CONTRACT_ADDRESS,
+        tokenToAverageAddress: null,
+        amount: 0,
+        frequency: 0,
+        initialStatus: true,
     });
     // ...the strategy list
     const [strategiesList, setStrategiesList] = useState([])
@@ -209,11 +209,11 @@ export function AveragingStrategiesForm() {
     // Updates the new strategy object
     const updateNewStrategy = async () => {
         setNewStrategy({
-            selectedSourceToken: selectedSourceToken ? selectedSourceToken.address : '',
-            selectedTokenToAverage: selectedTokenToAverage ? selectedTokenToAverage.address : '',
-            selectedAmount: selectedAmount,
-            selectedFrequency: selectedFrequency,
-            selectedInitialStatus: selectedInitialStatus
+            sourceTokenAddress: selectedSourceToken ? selectedSourceToken.address : '',
+            tokenToAverageAddress: selectedTokenToAverage ? selectedTokenToAverage.address : '',
+            amount: selectedAmount,
+            frequency: selectedFrequency,
+            initialStatus: selectedInitialStatus
         });
     }
 
@@ -223,7 +223,13 @@ export function AveragingStrategiesForm() {
 
         try {
             const contract = new ethers.Contract(AVERAGING_STRATEGY_CONTRACT_ADDRESS, AveragingStrategy.abi, signer)
-            let transaction = await contract.createAveragingStrategy(selectedTokenToAverage.address, selectedSourceToken.address, selectedInitialStatus, selectedAmount, selectedFrequency)
+            let transaction = await contract.createAveragingStrategy(
+                newStrategy.sourceTokenAddress,
+                newStrategy.tokenToAverageAddress,
+                newStrategy.initialStatus,
+                newStrategy.amount,
+                newStrategy.frequency
+            )
             await transaction.wait() // = wait(1)
 
             setStrategiesList([...strategiesList, newStrategy])
