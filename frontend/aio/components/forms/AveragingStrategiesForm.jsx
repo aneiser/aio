@@ -40,7 +40,7 @@ import AveragingStrategyContract from 'public/AveragingStrategy.json'
 // Must be done dynamically with useEffect after Next.js pre-renders
 
 
-export function AveragingStrategiesForm() {
+export const AveragingStrategiesForm = ({ supportedTokens, setSupportedTokens }) => {
     // Constants
     // -----------------------------------------------------------------------------------------------------------------
     // Addresses
@@ -79,8 +79,6 @@ export function AveragingStrategiesForm() {
     // -----------------------------------------------------------------------------------------------------------------
     // ...the mockDAI balance
     const [mockDaiBalance, setMockDaiBalance] = useState("?")
-    // ...the tokens supported by AIO
-    const [supportedTokens, setSupportedTokens] = useState([])
     // ...the selected averaging source token and its loading
     const [selectedSourceToken, setSelectedSourceToken] = useState(null)
     const [isLoadingSelectedSourceToken, setIsLoadingSelectedSourceToken] = useState(true)

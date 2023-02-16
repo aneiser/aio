@@ -1,3 +1,5 @@
+// React
+import { useState, useEffect } from 'react'
 // Next
 import Head from 'next/head'
 // WagmiConfig
@@ -12,6 +14,12 @@ import { AveragingStrategiesForm } from '@/components/forms/AveragingStrategiesF
 
 
 export default function Home() {
+  // States for...
+  // -----------------------------------------------------------------------------------------------------------------
+  // ...the tokens supported by AIO
+  const [supportedTokens, setSupportedTokens] = useState([])
+
+
   // Wagmi hooks for... (https://wagmi.sh/react/getting-started)
   // -----------------------------------------------------------------------------------------------------------------
   // ...accessing account data and connection status.
@@ -29,8 +37,11 @@ export default function Home() {
       <Layout>
         {isConnected ? (
           <>
-            <AveragingStrategiesForm></AveragingStrategiesForm>
-            <AveragingStrategiesTable></AveragingStrategiesTable>
+            <AveragingStrategiesForm supportedTokens={supportedTokens}
+                                     setSupportedTokens={setSupportedTokens}>
+            </AveragingStrategiesForm>
+            <AveragingStrategiesTable supportedTokens={supportedTokens}>
+            </AveragingStrategiesTable>
           </>
         ) : (
           <Flex p="2rem" justifyContent="center">

@@ -25,7 +25,7 @@ import { Avatar, AvatarBadge, AvatarGroup } from '@chakra-ui/react'
 import AveragingStrategyContract from 'public/AveragingStrategy.json'
 
 
-export function AveragingStrategiesTable() {
+export const AveragingStrategiesTable = ({ supportedTokens }) => {
 
     // Constants
     // -----------------------------------------------------------------------------------------------------------------
