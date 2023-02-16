@@ -34,6 +34,8 @@ export function AveragingStrategiesTable() {
     // -----------------------------------------------------------------------------------------------------------------
     // ...the smartcontract (sc/SC) events
     const [scEvents, setSCEvents] = useState(null)
+    // ...the strategy list
+    const [strategiesList, setStrategiesList] = useState([])
 
 
     // Wagmi hooks for... (https://wagmi.sh/react/getting-started)
@@ -55,6 +57,22 @@ export function AveragingStrategiesTable() {
         }
     }, [isConnected, address])
 
+    // Gets the strategies
+    // whenever the 'scEvents' status change
+    useEffect(() => {
+        if (isConnected && scEvents) {
+            getSCStrategiesArray()
+        }
+    }, [scEvents])
+
+    // Gets the strategies
+    // whenever the 'scEvents' status change
+    useEffect(() => {
+        if (isConnected) {
+            console.log(strategiesList)
+        }
+    }, [strategiesList])
+
 
     // Functions
     // -----------------------------------------------------------------------------------------------------------------
@@ -69,6 +87,28 @@ export function AveragingStrategiesTable() {
         let events = await contract.queryFilter(filter)
         console.log(events)
         setSCEvents(events)
+    }
+
+
+    // Gets the strategies...
+    const getSCStrategiesArray = async () => {
+        // ...if there are strategies,...
+        if (scEvents.filter(event => event.event === "AveragingStrategyCreated").length) {
+            let strategies = []
+            scEvents
+                .filter(event => event.event === "AveragingStrategyCreated")
+                .forEach((e) => {
+                    const strategy = {
+                        sourceTokenAddress: e.args.tokenAddress,
+                        tokenToAverageAddress: e.args.sourceToken,
+                        amount: e.args.amount.toNumber(),
+                        frequency: e.args.frequency.toNumber(),
+                        isActive: e.args.isActive
+                    };
+                    strategies = [...strategies, strategy];
+                });
+            setStrategiesList(strategies);
+        }
     }
 
 
