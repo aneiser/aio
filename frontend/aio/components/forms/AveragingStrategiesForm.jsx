@@ -35,7 +35,7 @@ import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import { useToast } from '@chakra-ui/react'
 // Components & Dapp contracts
 import MockDaiTokenContract from 'public/MockDaiToken.json'
-import AveragingStrategy from 'public/AveragingStrategy.json'
+import AveragingStrategyContract from 'public/AveragingStrategy.json'
 // Openocean API/SDK integation
 // Must be done dynamically with useEffect after Next.js pre-renders
 
@@ -238,7 +238,7 @@ export function AveragingStrategiesForm() {
         setWaitingBlochainSignatureConfirmation(true)
 
         try {
-            const contract = new ethers.Contract(AVERAGING_STRATEGY_CONTRACT_ADDRESS, AveragingStrategy.abi, signer)
+            const contract = new ethers.Contract(AVERAGING_STRATEGY_CONTRACT_ADDRESS, AveragingStrategyContract.abi, signer)
             let transaction = await contract.createAveragingStrategy(
                 newStrategy.sourceTokenAddress,
                 newStrategy.tokenToAverageAddress,
