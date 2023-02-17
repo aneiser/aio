@@ -164,26 +164,24 @@ export const AveragingStrategiesTable = ({ supportedTokens }) => {
                         </Td>
                         <Td>
                             <HStack>
-                                {/* <SkeletonCircle isLoaded={!isLoadingSelectedSourceToken}> */}
-                                    <Avatar
-                                        size="sm"
-                                        // name={selectedSourceToken ? selectedSourceToken.symbol : ''}
-                                        // src={selectedSourceToken ? selectedSourceToken.icon : ''}
-                                    />
-                                {/* </SkeletonCircle> */}
-                                    <Text>{strategy.sourceTokenAddress}</Text>
+                                <Avatar size="sm"
+                                    name={supportedTokens.find(token => ethers.utils.getAddress(strategy.sourceTokenAddress) === ethers.utils.getAddress(token.address)).name}
+                                    src={supportedTokens.find(token => ethers.utils.getAddress(strategy.sourceTokenAddress) === ethers.utils.getAddress(token.address)).icon}
+                                />
+                                <Text>
+                                    {supportedTokens.find(token => ethers.utils.getAddress(strategy.sourceTokenAddress) === ethers.utils.getAddress(token.address)).name}
+                                </Text>
                             </HStack>
                         </Td>
                         <Td>
                             <HStack>
-                                {/* <keletonCircle isLoaded={!isLoadingSelectedSourceToken}> */}
-                                    <Avatar
-                                        size="sm"
-                                        // name={selectedSourceToken ? selectedSourceToken.symbol : ''}
-                                        // src={selectedSourceToken ? selectedSourceToken.icon : ''}
-                                    />
-                                {/* </SkeletonCircle> */}
-                                    <Text>{strategy.tokenToAverageAddress}</Text>
+                                <Avatar size="sm"
+                                    name={supportedTokens.find(token => ethers.utils.getAddress(strategy.tokenToAverageAddress) === ethers.utils.getAddress(token.address)).name}
+                                    src={supportedTokens.find(token => ethers.utils.getAddress(strategy.tokenToAverageAddress) === ethers.utils.getAddress(token.address)).icon}
+                                />
+                                <Text>
+                                    {supportedTokens.find(token => ethers.utils.getAddress(strategy.tokenToAverageAddress) === ethers.utils.getAddress(token.address)).name}
+                                </Text>
                             </HStack>
                         </Td>
                         <Td isNumeric>{strategy.amount}</Td>
