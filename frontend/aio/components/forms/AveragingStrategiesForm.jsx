@@ -36,18 +36,14 @@ import { useToast } from '@chakra-ui/react'
 // Components & Dapp contracts
 import MockDaiTokenContract from 'public/MockDaiToken.json'
 import AveragingStrategyContract from 'public/AveragingStrategy.json'
-// Openocean API/SDK integation
-// Must be done dynamically with useEffect after Next.js pre-renders
 
 
-export const AveragingStrategiesForm = ({ supportedTokens, setSupportedTokens }) => {
+export const AveragingStrategiesForm = ({ supportedTokens }) => {
     // Constants
     // -----------------------------------------------------------------------------------------------------------------
     // Addresses
     const MOCK_DAI_CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
     const AVERAGING_STRATEGY_CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
-    // Supported tokens by AIO
-    const SUPPORTED_TOKENS = ["DAI", "1INCH", "AAVE", "AXS", "CRV", "LINK", "MANA", "MATIC", "MKR", "SHIB", "SUSHI", "UNI", "YFI", "WETH", "WBTC", "SAND"];
     // Source amount values
     const MIN_SOURCE_UNIT_VALUE = 1
     const MAX_SOURCE_UNIT_VALUE = 1000
@@ -157,36 +153,6 @@ export const AveragingStrategiesForm = ({ supportedTokens, setSupportedTokens })
 
 
     // `useEffect`s
-    // -------------------------------------------------------------------------------------------------------------------
-    // Openocean API/SDK integration
-    // Dynamically imported according to option 1 (of 3): https://stackoverflow.com/questions/66096260/why-am-i-getting-referenceerror-self-is-not-defined-when-i-import-a-client-side
-    // The error occurs because the library requires Web APIs to work, which are not available when Next.js pre-renders the page on the server-side.
-    // In your case, `openocean` tries to access the window object which is not present on the server.
-    // To fix it, you have to dynamically import `openocean` so it only gets loaded on the client-side.
-    useEffect(() => {
-        const initOpenocean = async () => {
-            const { OpenoceanApiSdk } = await import('@openocean.finance/api')
-            const openoceanApiSdk = new OpenoceanApiSdk()
-            const { api, swapSdk, config } = openoceanApiSdk
-
-            // Gets all the available tokens OpenOcean has on `eth`...
-            const getAvailableTokens = async () => {
-                api.getTokenList({
-                    chain: 'eth',
-                }).then((data) => {
-                    // ...but saves only the surpported by AIO ones
-                    const filteredArray = data.data.filter(token => SUPPORTED_TOKENS.includes(token.symbol));
-                    setSupportedTokens(filteredArray)
-                }).catch((error) => {
-                    console.error(error)
-                    return
-                });
-            }
-            getAvailableTokens()
-        }
-        initOpenocean()
-    }, [])
-
     // Gets the mock DAI balance whenever the users:
     // - connect their wallet to the Dapp (isConnected)
     // - change the account in their wallet (address)
