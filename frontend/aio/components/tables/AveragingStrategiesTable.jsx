@@ -94,22 +94,26 @@ export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setS
 
     // Gets the strategies...
     const getSCStrategiesArray = async () => {
-        // ...if there are strategies,...
-        if (scEvents.filter(event => event.event === "AveragingStrategyCreated").length) {
+        const contract = new ethers.Contract(AVERAGING_STRATEGY_CONTRACT_ADDRESS, AveragingStrategyContract.abi, provider)
+        let transaction = await contract.connect(address).readAveragingStrategy()
+        // ...if there are strategies, update the state...
+        if (transaction.length) {
             let strategies = []
-            scEvents
-                .filter(event => event.event === "AveragingStrategyCreated")
-                .forEach((e) => {
-                    const strategy = {
-                        sourceTokenAddress: e.args.sourceToken,
-                        tokenToAverageAddress: e.args.averagedToken,
-                        amount: e.args.amount.toNumber(),
-                        frequency: e.args.frequency.toNumber(),
-                        isActive: e.args.isActive
-                    };
-                    strategies = [...strategies, strategy];
-                });
+            transaction.forEach((item) => {
+                const strategy = {
+                    sourceTokenAddress: item.sourceToken,
+                    tokenToAverageAddress: item.averagedToken,
+                    amount: item.amount.toNumber(),
+                    frequency: item.frequency.toNumber(),
+                    isActive: item.isActive,
+                    averagingStrategyId: item.averagingStrategyId.toNumber()
+                };
+                strategies = [...strategies, strategy];
+            });
             setStrategiesList(strategies);
+        // if not empty it, so other addresses don't see the list of the previous address
+        } else {
+            setStrategiesList([])
         }
     }
 
