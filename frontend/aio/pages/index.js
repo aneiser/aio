@@ -5,7 +5,8 @@ import Head from 'next/head'
 // WagmiConfig
 import { useAccount } from 'wagmi'
 // ChakraProvider
-import { Flex } from '@chakra-ui/react'
+import { Center } from '@chakra-ui/react'
+import { Spinner } from '@chakra-ui/react'
 import { Text } from '@chakra-ui/react'
 // Component & Dapp
 import { Layout } from '@/components/layout/Layout.jsx'
@@ -26,6 +27,8 @@ export default function Home() {
   // -----------------------------------------------------------------------------------------------------------------
   // ...the tokens supported by AIO
   const [supportedTokens, setSupportedTokens] = useState([])
+  // ...the splash screens are typically used by particularly large applications to notify the user that the program is in the process of loading
+  const [isLoadingSplashScreen, setIsLoadingSplashScreen] = useState(true)
 
 
   // Wagmi hooks for... (https://wagmi.sh/react/getting-started)
@@ -42,29 +45,31 @@ export default function Home() {
   // In your case, `openocean` tries to access the window object which is not present on the server.
   // To fix it, you have to dynamically import `openocean` so it only gets loaded on the client-side.
   useEffect(() => {
-    const initOpenocean = async () => {
-      const { OpenoceanApiSdk } = await import('@openocean.finance/api')
-      const openoceanApiSdk = new OpenoceanApiSdk()
-      const { api, swapSdk, config } = openoceanApiSdk
+    if (isConnected) {
+      const initOpenocean = async () => {
+        const { OpenoceanApiSdk } = await import('@openocean.finance/api')
+        const openoceanApiSdk = new OpenoceanApiSdk()
+        const { api, swapSdk, config } = openoceanApiSdk
 
-      // Gets all the available tokens OpenOcean on `eth`...
-      const getAvailableTokens = async () => {
-        api.getTokenList({
-          chain: 'eth',
-        }).then((data) => {
-          // ...but saves only the surpported by AIO ones
-          const filteredArray = data.data.filter(token => SUPPORTED_TOKENS.includes(token.symbol));
-          setSupportedTokens(filteredArray)
-          loadingSplashScreen = false
-        }).catch((error) => {
-          console.error(error)
-          return
-        });
+        // Gets all the available tokens OpenOcean on `eth`...
+        const getAvailableTokens = async () => {
+          api.getTokenList({
+            chain: 'eth',
+          }).then((data) => {
+            // ...but saves only the surpported by AIO ones
+            const filteredArray = data.data.filter(token => SUPPORTED_TOKENS.includes(token.symbol));
+            setSupportedTokens(filteredArray)
+            setIsLoadingSplashScreen(false)
+          }).catch((error) => {
+            console.error(error)
+            return
+          });
+        }
+        getAvailableTokens()
       }
-      getAvailableTokens()
+      initOpenocean()
     }
-    initOpenocean()
-  }, [])
+  }, [isConnected])
 
 
   return (
@@ -77,16 +82,22 @@ export default function Home() {
       </Head>
       <Layout>
         {isConnected ? (
-          <>
-            <AveragingStrategiesForm supportedTokens={supportedTokens}>
-            </AveragingStrategiesForm>
-            <AveragingStrategiesTable supportedTokens={supportedTokens}>
-            </AveragingStrategiesTable>
-          </>
+          isLoadingSplashScreen ? (
+            <Center w='100%'>
+              <Spinner thickness='3px' speed='0.65s' emptyColor='gray.200' size='xl' />
+            </Center>
+          ) : (
+            <>
+              <AveragingStrategiesForm supportedTokens={supportedTokens}>
+              </AveragingStrategiesForm>
+              <AveragingStrategiesTable supportedTokens={supportedTokens}>
+              </AveragingStrategiesTable>
+            </>
+          )
         ) : (
-          <Flex p="2rem" justifyContent="center">
-            <Text>Please, connect your wallet to use AIO</Text>
-          </Flex>
+          <Center w='100%'>
+            <Text>Please connect your wallet to use AIO</Text>
+          </Center>
         )}
       </Layout>
     </>
