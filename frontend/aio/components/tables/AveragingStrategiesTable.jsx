@@ -137,15 +137,15 @@ export const AveragingStrategiesTable = ({ supportedTokens }) => {
     // -----------------------------------------------------------------------------------------------------------------
     return (
         <TableContainer>
-            <Table variant='simple'>
-                <TableCaption>Defined dollar cost averaging strategies</TableCaption>
+            <Table>
+                <TableCaption placement="top">Defined dollar cost averaging strategies</TableCaption>
                 <Thead>
                     <Tr key="tokenAddress_1">
                         <Th>Status</Th>
+                        <Th isNumeric>Amount</Th>
                         <Th>From</Th>
                         <Th>To</Th>
-                        <Th isNumeric>Amount</Th>
-                        <Th isNumeric>Interval</Th>
+                        <Th isNumeric>Each</Th>
                         {/* <Th isNumeric>Current price</Th>
                         <Th isNumeric>Avg. price</Th>
                         <Th isNumeric>Diff</Th> */}
@@ -162,6 +162,7 @@ export const AveragingStrategiesTable = ({ supportedTokens }) => {
                                 // onChange={(e) => setSelectedInitialStatus(e.target.checked)}
                             />
                         </Td>
+                        <Td isNumeric>{strategy.amount}</Td>
                         <Td>
                             <HStack>
                                 <Avatar size="sm"
@@ -184,22 +185,12 @@ export const AveragingStrategiesTable = ({ supportedTokens }) => {
                                 </Text>
                             </HStack>
                         </Td>
-                        <Td isNumeric>{strategy.amount}</Td>
                         <Td isNumeric>{convertSecondsToFrequency(strategy.frequency)}</Td>
                         {/* <Td isNumeric>1600 $</Td>
                         <Td isNumeric>1300 $</Td>
                         <Td isNumeric>10 %</Td> */}
                     </Tr>
                     )}
-                    <Tr color="blue" key="tokenAddress_4">
-                        <Td>Active</Td>
-                        <Td>ETH</Td>
-                        <Td isNumeric>10 $</Td>
-                        <Td isNumeric>1 week</Td>
-                        <Td isNumeric>1600 $</Td>
-                        <Td isNumeric>1300 $</Td>
-                        <Td isNumeric>10 %</Td>
-                    </Tr>
                 </Tbody>
             </Table>
         </TableContainer>
