@@ -22,11 +22,11 @@ import { Text } from '@chakra-ui/react'
 import { Stack, HStack, VStack } from '@chakra-ui/react'
 import { Avatar, AvatarBadge, AvatarGroup } from '@chakra-ui/react'
 // Components & Dapp contracts
-import AveragingStrategyContract from 'public/AveragingStrategy.json'
+// TODO import AveragingStrategyContract from 'public/AveragingStrategy.json'
+import AveragingStrategyContract from '../../../../backend/artifacts/contracts/AveragingStrategy.sol/AveragingStrategy.json'
 
 
-export function AveragingStrategiesTable() {
-
+export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setStrategiesList }) => {
     // Constants
     // -----------------------------------------------------------------------------------------------------------------
     // Addresses & Blocks
@@ -38,8 +38,6 @@ export function AveragingStrategiesTable() {
     // -----------------------------------------------------------------------------------------------------------------
     // ...the smartcontract (sc/SC) events
     const [scEvents, setSCEvents] = useState(null)
-    // ...the strategy list
-    const [strategiesList, setStrategiesList] = useState([])
 
 
     // Wagmi hooks for... (https://wagmi.sh/react/getting-started)
@@ -73,7 +71,7 @@ export function AveragingStrategiesTable() {
     // whenever the 'scEvents' status change
     useEffect(() => {
         if (isConnected) {
-            console.log(strategiesList)
+            // console.log(strategiesList)
         }
     }, [strategiesList])
 
@@ -103,8 +101,8 @@ export function AveragingStrategiesTable() {
                 .filter(event => event.event === "AveragingStrategyCreated")
                 .forEach((e) => {
                     const strategy = {
-                        sourceTokenAddress: e.args.tokenAddress,
-                        tokenToAverageAddress: e.args.sourceToken,
+                        sourceTokenAddress: e.args.sourceToken,
+                        tokenToAverageAddress: e.args.averagedToken,
                         amount: e.args.amount.toNumber(),
                         frequency: e.args.frequency.toNumber(),
                         isActive: e.args.isActive
@@ -137,15 +135,15 @@ export function AveragingStrategiesTable() {
     // -----------------------------------------------------------------------------------------------------------------
     return (
         <TableContainer>
-            <Table variant='simple'>
-                <TableCaption>Defined dollar cost averaging strategies</TableCaption>
+            <Table>
+                <TableCaption placement="top">Defined dollar cost averaging strategies</TableCaption>
                 <Thead>
                     <Tr key="tokenAddress_1">
                         <Th>Status</Th>
+                        <Th isNumeric>Amount</Th>
                         <Th>From</Th>
                         <Th>To</Th>
-                        <Th isNumeric>Amount</Th>
-                        <Th isNumeric>Interval</Th>
+                        <Th isNumeric>Each</Th>
                         {/* <Th isNumeric>Current price</Th>
                         <Th isNumeric>Avg. price</Th>
                         <Th isNumeric>Diff</Th> */}
@@ -162,46 +160,35 @@ export function AveragingStrategiesTable() {
                                 // onChange={(e) => setSelectedInitialStatus(e.target.checked)}
                             />
                         </Td>
-                        <Td>
-                            <HStack>
-                                {/* <SkeletonCircle isLoaded={!isLoadingSelectedSourceToken}> */}
-                                    <Avatar
-                                        size="sm"
-                                        // name={selectedSourceToken ? selectedSourceToken.symbol : ''}
-                                        // src={selectedSourceToken ? selectedSourceToken.icon : ''}
-                                    />
-                                {/* </SkeletonCircle> */}
-                                    <Text>{strategy.sourceTokenAddress}</Text>
-                            </HStack>
-                        </Td>
-                        <Td>
-                            <HStack>
-                                {/* <keletonCircle isLoaded={!isLoadingSelectedSourceToken}> */}
-                                    <Avatar
-                                        size="sm"
-                                        // name={selectedSourceToken ? selectedSourceToken.symbol : ''}
-                                        // src={selectedSourceToken ? selectedSourceToken.icon : ''}
-                                    />
-                                {/* </SkeletonCircle> */}
-                                    <Text>{strategy.tokenToAverageAddress}</Text>
-                            </HStack>
-                        </Td>
                         <Td isNumeric>{strategy.amount}</Td>
+                        <Td>
+                            <HStack>
+                                <Avatar size="sm"
+                                    name={supportedTokens.find(token => ethers.utils.getAddress(strategy.sourceTokenAddress) === ethers.utils.getAddress(token.address)).name}
+                                    src={supportedTokens.find(token => ethers.utils.getAddress(strategy.sourceTokenAddress) === ethers.utils.getAddress(token.address)).icon}
+                                />
+                                <Text>
+                                    {supportedTokens.find(token => ethers.utils.getAddress(strategy.sourceTokenAddress) === ethers.utils.getAddress(token.address)).name}
+                                </Text>
+                            </HStack>
+                        </Td>
+                        <Td>
+                            <HStack>
+                                <Avatar size="sm"
+                                    name={supportedTokens.find(token => ethers.utils.getAddress(strategy.tokenToAverageAddress) === ethers.utils.getAddress(token.address)).name}
+                                    src={supportedTokens.find(token => ethers.utils.getAddress(strategy.tokenToAverageAddress) === ethers.utils.getAddress(token.address)).icon}
+                                />
+                                <Text>
+                                    {supportedTokens.find(token => ethers.utils.getAddress(strategy.tokenToAverageAddress) === ethers.utils.getAddress(token.address)).name}
+                                </Text>
+                            </HStack>
+                        </Td>
                         <Td isNumeric>{convertSecondsToFrequency(strategy.frequency)}</Td>
                         {/* <Td isNumeric>1600 $</Td>
                         <Td isNumeric>1300 $</Td>
                         <Td isNumeric>10 %</Td> */}
                     </Tr>
                     )}
-                    <Tr color="blue" key="tokenAddress_4">
-                        <Td>Active</Td>
-                        <Td>ETH</Td>
-                        <Td isNumeric>10 $</Td>
-                        <Td isNumeric>1 week</Td>
-                        <Td isNumeric>1600 $</Td>
-                        <Td isNumeric>1300 $</Td>
-                        <Td isNumeric>10 %</Td>
-                    </Tr>
                 </Tbody>
             </Table>
         </TableContainer>
