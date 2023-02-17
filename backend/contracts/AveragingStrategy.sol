@@ -6,6 +6,7 @@ contract AveragingStrategy {
     // Variables
     struct AveragingStrategyConfig {
         address sourceToken;
+        address averagedToken;
         bool isActive;
         uint amount;
         uint frequency;
@@ -15,22 +16,24 @@ contract AveragingStrategy {
 
 
     //  Events
-    event AveragingStrategyCreated          (address tokenAddress, address sourceToken, bool isActive, uint amount, uint frequency);
-    event StatusAveragingStrategyUpdated    (address tokenAddress,                      bool isActive);
-    event AmountAveragingStrategyUpdated    (address tokenAddress,                                     uint amount);
-    event FrequencyAveragingStrategyUpdated (address tokenAddress,                                                  uint frequency);
-    event AveragingStrategyUpdated          (address tokenAddress,                      bool isActive, uint amount, uint frequency);
-    event AveragingStrategyDeleted          (address tokenAddress);
+    event AveragingStrategyCreated          (address averagedToken, address sourceToken, bool isActive, uint amount, uint frequency);
+    event StatusAveragingStrategyUpdated    (address averagedToken,                      bool isActive);
+    event AmountAveragingStrategyUpdated    (address averagedToken,                                     uint amount);
+    event FrequencyAveragingStrategyUpdated (address averagedToken,                                                  uint frequency);
+    event AveragingStrategyUpdated          (address averagedToken,                      bool isActive, uint amount, uint frequency);
+    event AveragingStrategyDeleted          (address averagedToken);
 
 
     // Functions
     // CRUD functions
     // Create
+    // TODO: onlyOwner
     function createAveragingStrategy(address _averagedToken, address _sourceToken, bool _isActive, uint _amount, uint _frequency) public {
-        averagingStrategiesList[_averagedToken].sourceToken = _sourceToken;
-        averagingStrategiesList[_averagedToken].isActive = _isActive;
-        averagingStrategiesList[_averagedToken].amount = _amount;
-        averagingStrategiesList[_averagedToken].frequency = _frequency;
+        averagingStrategiesList[msg.sender].averagedToken = _averagedToken;
+        averagingStrategiesList[msg.sender].sourceToken = _sourceToken;
+        averagingStrategiesList[msg.sender].isActive = _isActive;
+        averagingStrategiesList[msg.sender].amount = _amount;
+        averagingStrategiesList[msg.sender].frequency = _frequency;
 
         emit AveragingStrategyCreated(_averagedToken,  _sourceToken, _isActive, _amount, _frequency);
     }

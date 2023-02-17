@@ -35,7 +35,8 @@ import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import { useToast } from '@chakra-ui/react'
 // Components & Dapp contracts
 import MockDaiTokenContract from 'public/MockDaiToken.json'
-import AveragingStrategyContract from 'public/AveragingStrategy.json'
+// TODO import AveragingStrategyContract from 'public/AveragingStrategy.json'
+import AveragingStrategyContract from '../../../../backend/artifacts/contracts/AveragingStrategy.sol/AveragingStrategy.json'
 
 
 export const AveragingStrategiesForm = ({ supportedTokens, strategiesList, setStrategiesList }) => {
@@ -202,8 +203,8 @@ export const AveragingStrategiesForm = ({ supportedTokens, strategiesList, setSt
         try {
             const contract = new ethers.Contract(AVERAGING_STRATEGY_CONTRACT_ADDRESS, AveragingStrategyContract.abi, signer)
             let transaction = await contract.createAveragingStrategy(
-                newStrategy.sourceTokenAddress,
                 newStrategy.tokenToAverageAddress,
+                newStrategy.sourceTokenAddress,
                 newStrategy.initialStatus,
                 newStrategy.amount,
                 newStrategy.frequency

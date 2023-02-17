@@ -22,11 +22,11 @@ import { Text } from '@chakra-ui/react'
 import { Stack, HStack, VStack } from '@chakra-ui/react'
 import { Avatar, AvatarBadge, AvatarGroup } from '@chakra-ui/react'
 // Components & Dapp contracts
-import AveragingStrategyContract from 'public/AveragingStrategy.json'
+// TODO import AveragingStrategyContract from 'public/AveragingStrategy.json'
+import AveragingStrategyContract from '../../../../backend/artifacts/contracts/AveragingStrategy.sol/AveragingStrategy.json'
 
 
 export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setStrategiesList }) => {
-
     // Constants
     // -----------------------------------------------------------------------------------------------------------------
     // Addresses & Blocks
@@ -71,7 +71,7 @@ export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setS
     // whenever the 'scEvents' status change
     useEffect(() => {
         if (isConnected) {
-            console.log(strategiesList)
+            // console.log(strategiesList)
         }
     }, [strategiesList])
 
@@ -101,8 +101,8 @@ export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setS
                 .filter(event => event.event === "AveragingStrategyCreated")
                 .forEach((e) => {
                     const strategy = {
-                        sourceTokenAddress: e.args.tokenAddress,
-                        tokenToAverageAddress: e.args.sourceToken,
+                        sourceTokenAddress: e.args.sourceToken,
+                        tokenToAverageAddress: e.args.averagedToken,
                         amount: e.args.amount.toNumber(),
                         frequency: e.args.frequency.toNumber(),
                         isActive: e.args.isActive
