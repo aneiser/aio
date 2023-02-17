@@ -25,7 +25,7 @@ import { Avatar, AvatarBadge, AvatarGroup } from '@chakra-ui/react'
 import AveragingStrategyContract from 'public/AveragingStrategy.json'
 
 
-export const AveragingStrategiesTable = ({ supportedTokens }) => {
+export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setStrategiesList }) => {
 
     // Constants
     // -----------------------------------------------------------------------------------------------------------------
@@ -38,8 +38,6 @@ export const AveragingStrategiesTable = ({ supportedTokens }) => {
     // -----------------------------------------------------------------------------------------------------------------
     // ...the smartcontract (sc/SC) events
     const [scEvents, setSCEvents] = useState(null)
-    // ...the strategy list
-    const [strategiesList, setStrategiesList] = useState([])
 
 
     // Wagmi hooks for... (https://wagmi.sh/react/getting-started)

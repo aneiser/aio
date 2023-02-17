@@ -38,7 +38,7 @@ import MockDaiTokenContract from 'public/MockDaiToken.json'
 import AveragingStrategyContract from 'public/AveragingStrategy.json'
 
 
-export const AveragingStrategiesForm = ({ supportedTokens }) => {
+export const AveragingStrategiesForm = ({ supportedTokens, strategiesList, setStrategiesList }) => {
     // Constants
     // -----------------------------------------------------------------------------------------------------------------
     // Addresses
@@ -97,8 +97,6 @@ export const AveragingStrategiesForm = ({ supportedTokens }) => {
         frequency: 0,
         initialStatus: true,
     });
-    // ...the strategy list
-    const [strategiesList, setStrategiesList] = useState([])
     // ...the waiting for the blockchain confirmation
     const [waitingBlochainSignatureConfirmation, setWaitingBlochainSignatureConfirmation] = useState(false)
 

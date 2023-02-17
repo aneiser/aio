@@ -29,6 +29,8 @@ export default function Home() {
   const [supportedTokens, setSupportedTokens] = useState([])
   // ...the splash screens are typically used by particularly large applications to notify the user that the program is in the process of loading
   const [isLoadingSplashScreen, setIsLoadingSplashScreen] = useState(true)
+  // ...the strategy list
+  const [strategiesList, setStrategiesList] = useState([])
 
 
   // Wagmi hooks for... (https://wagmi.sh/react/getting-started)
@@ -88,9 +90,13 @@ export default function Home() {
             </Center>
           ) : (
             <>
-              <AveragingStrategiesForm supportedTokens={supportedTokens}>
+              <AveragingStrategiesForm supportedTokens={supportedTokens}
+                                       strategiesList={strategiesList}
+                                       setStrategiesList={setStrategiesList}>
               </AveragingStrategiesForm>
-              <AveragingStrategiesTable supportedTokens={supportedTokens}>
+              <AveragingStrategiesTable supportedTokens={supportedTokens}
+                                       strategiesList={strategiesList}
+                                       setStrategiesList={setStrategiesList}>
               </AveragingStrategiesTable>
             </>
           )
