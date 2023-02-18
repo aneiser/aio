@@ -10,9 +10,10 @@ contract Aion {
 contract AveragingStrategyRunner{
     Aion aion;
     // Set limit to avoid run out of goerliETH
-    int8 limiter = 5;
+    uint8 limiter = 5;
 
     event CurrentTimestamp(string text);
+    event Countdown(uint8 value);
 
     constructor() public payable {
         scheduleEmitAveragingStrategyConfigs();
@@ -30,8 +31,13 @@ contract AveragingStrategyRunner{
         if (limiter > 0) {
             emit CurrentTimestamp("I'm alive");
             limiter--;
+            emit Countdown(limiter);
         }
         scheduleEmitAveragingStrategyConfigs();
+    }
+
+    function getLimiter() public view returns (uint8) {
+        return limiter;
     }
 
     function () public payable {}
