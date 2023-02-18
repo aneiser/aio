@@ -14,6 +14,7 @@ contract AveragingStrategy {
         uint amount;
         uint frequency;
         uint averagingStrategyId;
+        uint creationTimestamp;
     }
 
     mapping (address => AveragingStrategyConfig[]) averagingStrategiesList;
@@ -48,7 +49,8 @@ contract AveragingStrategy {
                 amount: _amount,
                 frequency: _frequency,
                 isActive: _isActive,
-                averagingStrategyId: averagingStrategiesCounter
+                averagingStrategyId: averagingStrategiesCounter,
+                creationTimestamp: block.timestamp
             })
         );
 
