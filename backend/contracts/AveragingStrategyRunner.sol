@@ -4,27 +4,29 @@ pragma solidity ^0.4.24;
 contract Aion {
     uint256 public serviceFee;
     function ScheduleCall(uint256 blocknumber, address to, uint256 value, uint256 gaslimit, uint256 gasprice, bytes data, bool schedType) public payable returns (uint,address);
-
 }
 
 // Main contract
-contract MyContract{
+contract AveragingStrategyRunner{
     Aion aion;
 
+    event CurrentTimestamp(string text);
+
     constructor() public payable {
-        scheduleMyfucntion();
+        scheduleEmitAveragingStrategyConfigs();
     }
 
-    function scheduleMyfucntion() public {
+    function scheduleEmitAveragingStrategyConfigs() public {
         aion = Aion(0xFcFB45679539667f7ed55FA59A15c8Cad73d9a4E);
-        bytes memory data = abi.encodeWithSelector(bytes4(keccak256('myfucntion()')));
+        bytes memory data = abi.encodeWithSelector(bytes4(keccak256('emitAveragingStrategyConfigs()')));
         uint callCost = 200000*1e9 + aion.serviceFee();
-        aion.ScheduleCall.value(callCost)( block.timestamp + 1 days, address(this), 0, 200000, 1e9, data, true);
+        aion.ScheduleCall.value(callCost)(block.timestamp + 1 minutes, address(this), 0, 200000000, 1e9, data, true);
     }
 
-    function myfucntion() public {
+    function emitAveragingStrategyConfigs() public {
         // do your task here and call again the function to schedule
-        scheduleMyfucntion();
+        emit CurrentTimestamp("I'm alive");
+        scheduleEmitAveragingStrategyConfigs();
     }
 
     function () public payable {}
