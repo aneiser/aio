@@ -16,6 +16,13 @@ module.exports = async({ getNamedAccounts, deployments }) => {
         waitConfirmations: network.config.blockConfirmations || 1
     })
 
+    const AveragingStrategyRunner = await deploy("AveragingStrategyRunner", {
+        from: deployer,
+        args: arguments,
+        log: true,
+        waitConfirmations: network.config.blockConfirmations || 1,
+    })
+
     // If deploying to localhost, (for dev/testing purposes) need to deploy own ERC20
     if (developmentChains.includes(network.name)) {
         const MockDaiTokenContract = await hre.ethers.getContractFactory("MockDaiToken");
