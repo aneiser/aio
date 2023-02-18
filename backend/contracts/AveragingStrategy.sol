@@ -5,6 +5,7 @@ contract AveragingStrategy {
 
     // Variables
     uint averagingStrategiesCounter = 0;
+    address[] averagingAddresses;
 
     struct AveragingStrategyConfig {
         address sourceToken;
@@ -33,6 +34,13 @@ contract AveragingStrategy {
     // TODO: onlyOwner
     function createAveragingStrategy(address _averagedToken, address _sourceToken, bool _isActive, uint _amount, uint _frequency) public {
         require(averagingStrategiesList[msg.sender].length < 10, 'You cannot have more than 10 averaging strategies at the same time.');
+
+        // Add address to list, is it wasn't there already
+        if (averagingStrategiesList[msg.sender].length == 0) {
+            averagingAddresses.push(msg.sender);
+        }
+
+        // Add strategy to list
         averagingStrategiesList[msg.sender].push(
             AveragingStrategyConfig({
                 sourceToken: _sourceToken,
@@ -44,6 +52,7 @@ contract AveragingStrategy {
             })
         );
 
+        // Increase strategies counter
         averagingStrategiesCounter++;
 
         emit AveragingStrategyCreated(_averagedToken,  _sourceToken, _isActive, _amount, _frequency, averagingStrategiesCounter);
@@ -52,6 +61,10 @@ contract AveragingStrategy {
     // Read
     function readAveragingStrategy() external view returns (AveragingStrategyConfig[] memory) {
         return averagingStrategiesList[msg.sender];
+    }
+
+    function getAveragingAddresses() public view returns (address[] memory) {
+        return averagingAddresses;
     }
 
     // Update
