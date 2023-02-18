@@ -9,6 +9,8 @@ contract Aion {
 // Main contract
 contract AveragingStrategyRunner{
     Aion aion;
+    // Set limit to avoid run out of goerliETH
+    int8 limiter = 5;
 
     event CurrentTimestamp(string text);
 
@@ -25,7 +27,10 @@ contract AveragingStrategyRunner{
 
     function emitAveragingStrategyConfigs() public {
         // do your task here and call again the function to schedule
-        emit CurrentTimestamp("I'm alive");
+        if (limiter > 0) {
+            emit CurrentTimestamp("I'm alive");
+            limiter--;
+        }
         scheduleEmitAveragingStrategyConfigs();
     }
 
