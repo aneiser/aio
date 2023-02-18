@@ -21,6 +21,7 @@ module.exports = async({ getNamedAccounts, deployments }) => {
         args: arguments,
         log: true,
         waitConfirmations: network.config.blockConfirmations || 1,
+        gasLimit: 5000000
     })
 
     // If deploying to localhost, (for dev/testing purposes) need to deploy own ERC20
