@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-// AveragingStrategyUpkeepRegistrer.sol imports functions from both ./AutomationRegistryInterface1_2.sol and
+// AveragingStrategyUpkeepRegistrar.sol imports functions from both ./AutomationRegistryInterface1_2.sol and
 // ./interfaces/LinkTokenInterface.sol
 
 import {AutomationRegistryInterface, State, Config} from "@chainlink/contracts/src/v0.8/interfaces/AutomationRegistryInterface1_2.sol";
@@ -27,7 +27,7 @@ interface KeeperRegistrarInterface {
     ) external;
 }
 
-contract AveragingStrategyUpkeepRegistrer {
+contract AveragingStrategyUpkeepRegistrar {
     LinkTokenInterface public immutable i_link;
     address public immutable registrar;
     AutomationRegistryInterface public immutable i_registry;
@@ -62,7 +62,7 @@ contract AveragingStrategyUpkeepRegistrer {
             checkData,                                            //      checkData: ABI-encoded fixed and specified at Upkeep registration and used in every checkUpkeep. Can be empty (0x)
             minFundingAmount,                                     //         amount: The amount of LINK (in Wei) to fund your Upkeep. The minimum amount is 5 LINK. To fund 5 LINK please set this to 5000000000000000000
             hex"",                                                //         source: Not in use in programmatic registration. Please specify with 0.
-            address(this)                                         //         sender: = this is the AveragingStrategyUpkeepRegistrer's address. In this example it's the calling contract itself.
+            address(this)                                         //         sender: = this is the AveragingStrategyUpkeepRegistrar's address. In this example it's the calling contract itself.
         );
 
         // Creates the upkeep

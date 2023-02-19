@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.17;
 
-import "./AveragingStrategyUpkeepRegistrer.sol";
+import "./AveragingStrategyUpkeepRegistrar.sol";
 
 contract AveragingStrategy {
 
@@ -39,7 +39,7 @@ contract AveragingStrategy {
     function createAveragingStrategy(address _averagedToken, address _sourceToken, bool _isActive, uint _amount, uint _frequency) public {
         require(averagingStrategiesList[msg.sender].length < 10, 'You cannot have more than 10 averaging strategies at the same time.');
 
-        AveragingStrategyUpkeepRegistrer registrer = new AveragingStrategyUpkeepRegistrer();
+        AveragingStrategyUpkeepRegistrar registrar = new AveragingStrategyUpkeepRegistrar();
 
         // Add address to list, is it wasn't there already
         if (averagingStrategiesList[msg.sender].length == 0) {
@@ -67,7 +67,7 @@ contract AveragingStrategy {
             // ...encodes its AveragingStrategyConfig[]...
             bytes memory encodedStrategies = abi.encode(averagingStrategiesList[averagingAddresses[i]]);
             // ...registers and upkeep, which ID is stored in upkeepIDList
-            upkeepIDList[averagingAddresses[i]] = registrer.registerAveragingStrategiesByAddress(
+            upkeepIDList[averagingAddresses[i]] = registrar.registerAveragingStrategiesByAddress(
                 string(abi.encodePacked("AveragingStrategiesOf", averagingAddresses[i])), // name      Name of Upkeep
                 // TODO: Parametrized gasLimit,                                           // gasLimit  The maximum amount of gas that will be used to execute your function on-chain
                 encodedStrategies                                                         // checkData ABI-encoded fixed and specified at Upkeep registration and used in every checkUpkeep. Can be empty (0x)
