@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.6;
 
-// UpkeepIDConsumerExample.sol imports functions from both ./AutomationRegistryInterface1_2.sol and
+// AveragingStrategyUpkeepRegistrer.sol imports functions from both ./AutomationRegistryInterface1_2.sol and
 // ./interfaces/LinkTokenInterface.sol
 
 import {AutomationRegistryInterface, State, Config} from "@chainlink/contracts/src/v0.8/interfaces/AutomationRegistryInterface1_2.sol";
@@ -27,7 +27,7 @@ interface KeeperRegistrarInterface {
     ) external;
 }
 
-contract UpkeepIDConsumerExample {
+contract AveragingStrategyUpkeepRegistrer {
     LinkTokenInterface public immutable i_link;
     address public immutable registrar;
     AutomationRegistryInterface public immutable i_registry;
@@ -78,7 +78,7 @@ contract UpkeepIDConsumerExample {
             checkData,     // checkData      = hex""?
             amount,        // amount         = 5000000000000000000 (the min)
             source,        // source         = 0
-            address(this)   // sender         this is the UpkeepIDConsumerExample's address. In this example it's the calling contract itself.
+            address(this)   // sender         this is the AveragingStrategyUpkeepRegistrer's address. In this example it's the calling contract itself.
         );
 
         // Creates the upkeep
