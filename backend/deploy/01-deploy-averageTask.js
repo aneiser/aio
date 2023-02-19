@@ -21,6 +21,12 @@ module.exports = async({ getNamedAccounts, deployments }) => {
         log: true,
         waitConfirmations: network.config.blockConfirmations || 1
     })
+    const AveragingStrategyUpkeepRunner = await deploy("AveragingStrategyUpkeepRunner", {
+        from: deployer,
+        args: arguments,
+        log: true,
+        waitConfirmations: network.config.blockConfirmations || 1
+    })
 
     // If deploying to localhost, (for dev/testing purposes) need to deploy own ERC20
     if (developmentChains.includes(network.name)) {
