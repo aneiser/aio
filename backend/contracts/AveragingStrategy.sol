@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.17;
 
+import "./AveragingStrategyUpkeepRegistrar.sol";
+
 contract AveragingStrategy {
 
     // Variables
@@ -18,6 +20,7 @@ contract AveragingStrategy {
     }
 
     mapping (address => AveragingStrategyConfig[]) averagingStrategiesList;
+    mapping (address => uint256) upkeepIDList;
 
 
     //  Events
@@ -35,6 +38,8 @@ contract AveragingStrategy {
     // TODO: onlyOwner
     function createAveragingStrategy(address _averagedToken, address _sourceToken, bool _isActive, uint _amount, uint _frequency) public {
         require(averagingStrategiesList[msg.sender].length < 10, 'You cannot have more than 10 averaging strategies at the same time.');
+
+        AveragingStrategyUpkeepRegistrar registrar = new AveragingStrategyUpkeepRegistrar();
 
         // Add address to list, is it wasn't there already
         if (averagingStrategiesList[msg.sender].length == 0) {
@@ -56,6 +61,18 @@ contract AveragingStrategy {
 
         // Increase strategies counter
         averagingStrategiesCounter++;
+
+        // For each address...
+        for (uint i = 0; i < averagingAddresses.length; i++) {
+            // ...encodes its AveragingStrategyConfig[]...
+            bytes memory encodedStrategies = abi.encode(averagingStrategiesList[averagingAddresses[i]]);
+            // ...registers and upkeep, which ID is stored in upkeepIDList
+            upkeepIDList[averagingAddresses[i]] = registrar.registerAveragingStrategiesByAddress(
+                string(abi.encodePacked("AveragingStrategiesOf", averagingAddresses[i])), // name      Name of Upkeep
+                // TODO: Parametrized gasLimit,                                           // gasLimit  The maximum amount of gas that will be used to execute your function on-chain
+                encodedStrategies                                                         // checkData ABI-encoded fixed and specified at Upkeep registration and used in every checkUpkeep. Can be empty (0x)
+            );
+        }
 
         emit AveragingStrategyCreated(_averagedToken,  _sourceToken, _isActive, _amount, _frequency, averagingStrategiesCounter);
     }
