@@ -3,12 +3,15 @@ const { developmentChains } = require("../helper-hardhat-config")
 const { verify } = require("../utils/verify")
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
-    const { deploy, log } = deployments
+    const { deploy, log, get } = deployments
     const { deployer } = await getNamedAccounts()
 
     log("03-deploy-averagingStrategyUpkeepRegistrar.js")
     log("------------------------------------------------------------------------------------------------------------")
-    arguments = []
+
+    const AveragingStrategyUpkeepRunner = await get("AveragingStrategyUpkeepRunner")
+    arguments = [AveragingStrategyUpkeepRunner.address]
+
     const AveragingStrategyUpkeepRegistrar = await deploy("AveragingStrategyUpkeepRegistrar", {
         from: deployer,
         args: arguments,
@@ -27,6 +30,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 }
 
 // TODO update DAI address to goerli
-// TODO ...so the AveragingStrategyUpkeepRunner goes before than...
-// TODO ...AveragingStrategyUpkeepRegistrar so this can get its deployed address
 module.exports.tags = ["all", "averagingStrategyUpkeepRegistrar", "main"]

@@ -31,6 +31,12 @@ contract AveragingStrategy {
     event AveragingStrategyUpdated          (address averagedToken,                      bool isActive, uint amount, uint frequency);
     event AveragingStrategyDeleted          (address averagedToken);
 
+    address upkeepContract;
+
+    // Constructor
+    constructor(address _upkeepContract) {
+        upkeepContract = _upkeepContract;
+    }
 
     // Functions
     // CRUD functions
@@ -39,7 +45,7 @@ contract AveragingStrategy {
     function createAveragingStrategy(address _averagedToken, address _sourceToken, bool _isActive, uint _amount, uint _frequency) public {
         require(averagingStrategiesList[msg.sender].length < 10, 'You cannot have more than 10 averaging strategies at the same time.');
 
-        AveragingStrategyUpkeepRegistrar registrar = new AveragingStrategyUpkeepRegistrar();
+        AveragingStrategyUpkeepRegistrar registrar = new AveragingStrategyUpkeepRegistrar(upkeepContract);
 
         // Add address to list, is it wasn't there already
         if (averagingStrategiesList[msg.sender].length == 0) {

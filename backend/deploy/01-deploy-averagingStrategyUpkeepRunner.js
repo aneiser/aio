@@ -12,35 +12,26 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log("█   █ █     █     █     █   █   █   █   █ █     █  ██   █             █ █     █   █   █   █       █       █ ")
     log("████  █████ █     █████  ███    █   █   █ █████ █   █   █         █████  ████ █   █ █████ █       █   █████ ")
     log("")
-    log("01-deploy-averagingStrategy.js")
+    log("01-deploy-averagingStrategyUpkeepRunner.js")
     log("------------------------------------------------------------------------------------------------------------")
+
     arguments = []
-    const AveragingStrategy = await deploy("AveragingStrategy", {
+
+    const AveragingStrategyUpkeepRunner = await deploy("AveragingStrategyUpkeepRunner", {
         from: deployer,
         args: arguments,
         log: true,
         waitConfirmations: network.config.blockConfirmations || 1
     })
 
-    // If deploying to localhost, (for dev/testing purposes) need to deploy own ERC20
-    if (developmentChains.includes(network.name)) {
-        const MockDaiTokenContract = await hre.ethers.getContractFactory("MockDaiToken");
-        mockDai = await MockDaiTokenContract.deploy();
-        await mockDai.deployed()
-        let DAITokenAddress = mockDai.address
-        console.log('deploying "mockDai address": deployed at ' + DAITokenAddress);
-    }
-
     // Verify the smart contract
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN) {
         log("------------------------------------------------------------------------------------------------------------")
         log("Verifying...")
-        await verify(AveragingStrategy.address, arguments)
+        await verify(AveragingStrategyUpkeepRunner.address, arguments)
     }
     log("")
 }
 
 // TODO update DAI address to goerli
-// TODO ...so the AveragingStrategyUpkeepRunner goes before than...
-// TODO ...AveragingStrategyUpkeepRegistrar so this can get its deployed address
-module.exports.tags = ["all", "averagingStrategy", "main"]
+module.exports.tags = ["all", "averagingStrategyUpkeepRunner", "main"]
