@@ -22,15 +22,20 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         waitConfirmations: network.config.blockConfirmations || 1
     })
 
-    // If deploying to localhost, (for dev/testing purposes) need to deploy own ERC20
+    let DAITokenAddress;
+    // If deploying to localhost (for dev/testing purposes), deploy own ERC20
     if (developmentChains.includes(network.name)) {
         const MockDaiTokenContract = await hre.ethers.getContractFactory("MockDaiToken");
         mockDai = await MockDaiTokenContract.deploy();
         await mockDai.deployed()
-        let DAITokenAddress = mockDai.address
-        console.log('deploying "mockDai address": deployed at ' + DAITokenAddress);
+        DAITokenAddress = mockDai.address
+        console.log('mockDai deployed at address: ' + DAITokenAddress);
+    } else {
+        // Potential process.env values:
+        // - GOERLI_DAI_TOKEN_ADDRESS
+        DAITokenAddress = process.env[`${network.name.toUpperCase()}_DAI_TOKEN_ADDRESS`]
+        console.log('Real DAI address: ' + DAITokenAddress);
     }
-    log("------------------------------------------------------------------------------------------------------------")
 
     // Verify the smart contract
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN) {
