@@ -36,15 +36,13 @@ import { useToast } from '@chakra-ui/react'
 // Components & Dapp contracts
 import MockDaiTokenContract from 'public/MockDaiToken.json'
 import AveragingStrategyContract from 'public/AveragingStrategy.json'
-import AveragingStrategyContract from '../../../../backend/artifacts/contracts/AveragingStrategy.sol/AveragingStrategy.json'
-
 
 export const AveragingStrategiesForm = ({ supportedTokens, strategiesList, setStrategiesList }) => {
     // Constants
     // -----------------------------------------------------------------------------------------------------------------
     // Addresses
     const DAI_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_DAI_TOKEN_ADDRESS
-    const AVERAGING_STRATEGY_CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    const AVERAGING_STRATEGY_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_AVERAGING_STRATEGY_CONTRACT_ADDRESS
     // Source amount values
     const MIN_SOURCE_UNIT_VALUE = 1
     const MAX_SOURCE_UNIT_VALUE = 1000

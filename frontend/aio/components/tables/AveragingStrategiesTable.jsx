@@ -22,15 +22,14 @@ import { Text } from '@chakra-ui/react'
 import { Stack, HStack, VStack } from '@chakra-ui/react'
 import { Avatar, AvatarBadge, AvatarGroup } from '@chakra-ui/react'
 // Components & Dapp contracts
-// TODO import AveragingStrategyContract from 'public/AveragingStrategy.json'
-import AveragingStrategyContract from '../../../../backend/artifacts/contracts/AveragingStrategy.sol/AveragingStrategy.json'
+import AveragingStrategyContract from 'public/AveragingStrategy.json'
 
 
 export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setStrategiesList }) => {
     // Constants
     // -----------------------------------------------------------------------------------------------------------------
     // Addresses & Blocks
-    const AVERAGING_STRATEGY_CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    const AVERAGING_STRATEGY_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_AVERAGING_STRATEGY_CONTRACT_ADDRESS
     const DEPLOYMENT_BLOCK = 0
 
 
