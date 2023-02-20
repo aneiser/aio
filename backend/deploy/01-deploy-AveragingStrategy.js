@@ -6,9 +6,14 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments
     const { deployer } = await getNamedAccounts()
 
-    log("----------------------------------------------------------------------")
+    log("████  █████ ████  █      ███  █   █ █   █ █████ █   █ █████       █████  ████ ████  █████ ████  █████ █████ ")
+    log("█   █ █     █   █ █     █   █  █ █  ██ ██ █     ██  █   █         █     █     █   █   █   █   █   █   █     ")
+    log("█   █ ████  ████  █     █   █   █   █ █ █ ████  █ █ █   █         █████ █     ████    █   ████    █   █████ ")
+    log("█   █ █     █     █     █   █   █   █   █ █     █  ██   █             █ █     █   █   █   █       █       █ ")
+    log("████  █████ █     █████  ███    █   █   █ █████ █   █   █         █████  ████ █   █ █████ █       █   █████ ")
+    log("")
     log("01-deploy-averagingStrategy.js")
-    log("----------------------------------------------------------------------")
+    log("------------------------------------------------------------------------------------------------------------")
     arguments = []
     const AveragingStrategy = await deploy("AveragingStrategy", {
         from: deployer,
@@ -23,16 +28,17 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         mockDai = await MockDaiTokenContract.deploy();
         await mockDai.deployed()
         let DAITokenAddress = mockDai.address
-        console.log("mockDai address: " + DAITokenAddress);
+        console.log('deploying "mockDai address": deployed at ' + DAITokenAddress);
     }
-    log("----------------------------------------------------------------------")
+    log("------------------------------------------------------------------------------------------------------------")
 
     // Verify the smart contract
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN) {
+        log("------------------------------------------------------------------------------------------------------------")
         log("Verifying...")
         await verify(AveragingStrategy.address, arguments)
     }
-    log("======================================================================")
+    log("")
 }
 
 module.exports.tags = ["all", "averagingStrategy", "main"]
