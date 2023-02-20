@@ -10,7 +10,12 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log("------------------------------------------------------------------------------------------------------------")
 
     const AveragingStrategyUpkeepRunner = await get("AveragingStrategyUpkeepRunner")
-    arguments = [AveragingStrategyUpkeepRunner.address]
+    arguments = [
+        AveragingStrategyUpkeepRunner.address,
+        process.env.GOERLI_CHAINLINK_LINK_TOKEN_ADDRESS,
+        process.env.GOERLI_CHAINLINK_AUTOMATION_REGISTRAR_ADDRESS,
+        process.env.GOERLI_CHAINLINK_AUTOMATION_REGISTRY_ADDRESS
+    ]
 
     const AveragingStrategyUpkeepRegistrar = await deploy("AveragingStrategyUpkeepRegistrar", {
         from: deployer,

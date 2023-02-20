@@ -32,10 +32,21 @@ contract AveragingStrategy {
     event AveragingStrategyDeleted          (address averagedToken);
 
     address upkeepContract;
+    address goerliChainlinkLinkTokenAddress;
+    address goerliChainlinkAutomationRegistrarAddress;
+    address goerliChainlinkAutomationRegistryAddress;
 
     // Constructor
-    constructor(address _upkeepContract) {
+    constructor(
+        address _upkeepContract,
+        address _goerliChainlinkLinkTokenAddress,
+        address _goerliChainlinkAutomationRegistrarAddress,
+        address _goerliChainlinkAutomationRegistryAddress
+    ) {
         upkeepContract = _upkeepContract;
+        goerliChainlinkLinkTokenAddress = _goerliChainlinkLinkTokenAddress;
+        goerliChainlinkAutomationRegistrarAddress = _goerliChainlinkAutomationRegistrarAddress;
+        goerliChainlinkAutomationRegistryAddress = _goerliChainlinkAutomationRegistryAddress;
     }
 
     // Functions
@@ -45,7 +56,12 @@ contract AveragingStrategy {
     function createAveragingStrategy(address _averagedToken, address _sourceToken, bool _isActive, uint _amount, uint _frequency) public {
         require(averagingStrategiesList[msg.sender].length < 10, 'You cannot have more than 10 averaging strategies at the same time.');
 
-        AveragingStrategyUpkeepRegistrar registrar = new AveragingStrategyUpkeepRegistrar(upkeepContract);
+        AveragingStrategyUpkeepRegistrar registrar = new AveragingStrategyUpkeepRegistrar(
+            upkeepContract,
+            goerliChainlinkLinkTokenAddress,
+            goerliChainlinkAutomationRegistrarAddress,
+            goerliChainlinkAutomationRegistryAddress
+        );
 
         // Add address to list, is it wasn't there already
         if (averagingStrategiesList[msg.sender].length == 0) {
