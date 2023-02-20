@@ -30,7 +30,7 @@ export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setS
     // -----------------------------------------------------------------------------------------------------------------
     // Addresses & Blocks
     const AVERAGING_STRATEGY_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_AVERAGING_STRATEGY_CONTRACT_ADDRESS
-    const DEPLOYMENT_BLOCK = 0
+    const DEPLOYMENT_BLOCK = process.env.NEXT_PUBLIC_AVERAGING_STRATEGY_DEPLOYMENT_BLOCK
 
 
     // States for...
