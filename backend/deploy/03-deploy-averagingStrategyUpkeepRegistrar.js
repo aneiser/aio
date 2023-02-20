@@ -34,5 +34,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log("")
 }
 
-// TODO update DAI address to goerli
 module.exports.tags = ["all", "averagingStrategyUpkeepRegistrar", "main"]
