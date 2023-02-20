@@ -1,9 +1,11 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-deploy");
 require("dotenv").config();
+require("@nomiclabs/hardhat-etherscan");
 
 const INFURA = process.env.INFURA || "";
 const PK = process.env.PK || "";
+const ETHERSCAN = process.env.ETHERSCAN || "";
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -18,6 +20,11 @@ module.exports = {
       accounts: [`0x${PK}`],
       chainId: 5,
       blockConfirmations: 6
+    }
+  },
+  etherscan: {
+    apiKey: {
+      goerli: ETHERSCAN,
     }
   },
   namedAccounts: {
