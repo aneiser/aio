@@ -6,9 +6,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments
     const { deployer } = await getNamedAccounts()
 
-    log("----------------------------------------------------------------------")
     log("02-deploy-averagingStrategyUpkeepRunner.js")
-    log("----------------------------------------------------------------------")
+    log("------------------------------------------------------------------------------------------------------------")
     arguments = []
     const AveragingStrategyUpkeepRunner = await deploy("AveragingStrategyUpkeepRunner", {
         from: deployer,
@@ -16,14 +15,14 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         log: true,
         waitConfirmations: network.config.blockConfirmations || 1
     })
-    log("----------------------------------------------------------------------")
 
     // Verify the smart contract
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN) {
+        log("------------------------------------------------------------------------------------------------------------")
         log("Verifying...")
         await verify(AveragingStrategyUpkeepRunner.address, arguments)
     }
-    log("======================================================================")
+    log("")
 }
 
 // TODO update DAI address to goerli
