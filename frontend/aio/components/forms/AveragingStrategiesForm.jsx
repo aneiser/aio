@@ -43,18 +43,18 @@ export const AveragingStrategiesForm = ({ supportedTokens, strategiesList, setSt
     // Constants
     // -----------------------------------------------------------------------------------------------------------------
     // Addresses
-    const MOCK_DAI_CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    const DAI_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_DAI_TOKEN_ADDRESS
     const AVERAGING_STRATEGY_CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
     // Source amount values
     const MIN_SOURCE_UNIT_VALUE = 1
     const MAX_SOURCE_UNIT_VALUE = 1000
     // Frequency names and values
-    const SECOND_UNIT= "Seconds"
-    const MINUTE_UNIT= "Minutes"
-    const HOUR_UNIT= "Hours"
-    const DAY_UNIT= "Days"
-    const WEEK_UNIT= "Weeks"
-    const MONTH_UNIT= "Months" // Not natively supported by Solidity
+    const SECOND_UNIT = "Seconds"
+    const MINUTE_UNIT = "Minutes"
+    const HOUR_UNIT = "Hours"
+    const DAY_UNIT = "Days"
+    const WEEK_UNIT = "Weeks"
+    const MONTH_UNIT = "Months" // Not natively supported by Solidity
     const MIN_FREQUENCY_VALUE = 1
     const MAX_FREQUENCY_VALUE_FOR_SECOND_MINUTE_UNIT = 60
     const MAX_FREQUENCY_VALUE_FOR_HOUR_UNIT = 24
@@ -92,7 +92,7 @@ export const AveragingStrategiesForm = ({ supportedTokens, strategiesList, setSt
     const [selectedInitialStatus, setSelectedInitialStatus] = useState(true)
     // ...the new strategy
     const [newStrategy, setNewStrategy] = useState({
-        sourceTokenAddress: MOCK_DAI_CONTRACT_ADDRESS,
+        sourceTokenAddress: DAI_CONTRACT_ADDRESS,
         tokenToAverageAddress: null,
         amount: 0,
         frequency: 0,
@@ -172,7 +172,7 @@ export const AveragingStrategiesForm = ({ supportedTokens, strategiesList, setSt
     // -----------------------------------------------------------------------------------------------------------------
     // Gets mock DAI balance
     const getMockDaiBalance = async () => {
-        const contract = new ethers.Contract(MOCK_DAI_CONTRACT_ADDRESS, MockDaiTokenContract.abi, provider)
+        const contract = new ethers.Contract(DAI_CONTRACT_ADDRESS, MockDaiTokenContract.abi, provider)
         let transaction = await contract.balanceOf(address)
         setMockDaiBalance(ethers.utils.formatEther(transaction.toString()))
     }
@@ -337,7 +337,7 @@ export const AveragingStrategiesForm = ({ supportedTokens, strategiesList, setSt
                                 id="initial-status"
                                 isChecked={selectedInitialStatus}
                                 onChange={(e) => setSelectedInitialStatus(e.target.checked)}
-                                />
+                            />
                         </FormControl>
                     </VStack>
                 </CardBody>
