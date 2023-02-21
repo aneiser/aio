@@ -39,6 +39,13 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
                 }
             })
 
+            it("... should NOT 'createAveragingStrategy' if two same tokens", async function () {
+                let { averagedToken, sourceToken, isActive, amount, frequency } = correctStrategySample;
+                averagedToken = sourceToken
+                await expect(avgStrgy.connect(user).createAveragingStrategy(averagedToken, sourceToken, isActive, amount, frequency))
+                    .to.be.revertedWith("You must use two different tokens.")
+            })
+
             it("... should NOT 'createAveragingStrategy' if less than amount 2 source token", async function () {
                 let { averagedToken, sourceToken, isActive, amount, frequency } = correctStrategySample;
                 amount = UNDER_AMOUNT
