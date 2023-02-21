@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
+
+// Pragma statements
 pragma solidity 0.8.17;
 
+// Contracts
 contract AveragingStrategy {
-
+    // Type declarations
+    // -------------------------------------------------------------------------
     struct AveragingStrategyConfig {
         address sourceToken;
         address averagedToken;
@@ -14,13 +18,13 @@ contract AveragingStrategy {
     }
 
 
-    // Variables
+    // (Internal) State variables ----------------------------------------------
     uint averagingStrategiesCounter = 0;
     address[] averagingAddresses;
     mapping (address => AveragingStrategyConfig[]) averagingStrategiesList;
 
 
-    //  Events
+    // Events ------------------------------------------------------------------
     event AveragingStrategyCreated          (address averagedToken, address sourceToken, bool isActive, uint amount, uint frequency, uint averagingStrategyId);
     event StatusAveragingStrategyUpdated    (address averagedToken,                      bool isActive);
     event AmountAveragingStrategyUpdated    (address averagedToken,                                     uint amount);
@@ -29,7 +33,7 @@ contract AveragingStrategy {
     event AveragingStrategyDeleted          (address averagedToken);
 
 
-    // Functions
+    // Functions ---------------------------------------------------------------
     // CRUD functions
     // Create
     // TODO: onlyOwner
