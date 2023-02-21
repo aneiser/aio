@@ -43,6 +43,7 @@ contract AveragingStrategy {
         require(_amount >= 2, 'The minimum amount to spend is 2.');
         require(_frequency >= 60, 'The minimum frequency is 1 minute.');
         require(_frequency <= 31557600, 'The maximun frequency is 12 months.'); // 31557600 seconds = 12 months
+        // TODO evaluate require not repeat _averagedToken
 
         // Add address to list, is it wasn't there already
         if (averagingStrategiesList[msg.sender].length == 0) {
@@ -65,7 +66,7 @@ contract AveragingStrategy {
         // Increase strategies counter
         averagingStrategiesCounter++;
 
-        emit AveragingStrategyCreated(_averagedToken,  _sourceToken, _isActive, _amount, _frequency, averagingStrategiesCounter);
+        emit AveragingStrategyCreated(_averagedToken,  _sourceToken, _isActive, _amount, _frequency, averagingStrategiesCounter-1);
     }
 
     // Read

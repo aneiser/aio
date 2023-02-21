@@ -43,12 +43,13 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
             it("... should NOT 'createAveragingStrategy' if more than 10 averaging strategies at the same time", async function () {
                 let { averagedToken, sourceToken, isActive, amount, frequency } = correctStrategySample;
                 for (let index = 0; index < MAX_STRATEGIES+1; index++) {
-                    avgStrgy.connect(user).createAveragingStrategy(averagedToken, sourceToken, isActive, index+2, frequency)
                     if (index >= MAX_STRATEGIES){
                         await expect(avgStrgy.connect(user).createAveragingStrategy(averagedToken, sourceToken, isActive, amount, frequency))
-                            .to.be.revertedWith("You cannot have more than 10 averaging strategies at the same time.")
-                        }
+                        .to.be.revertedWith("You cannot have more than 10 averaging strategies at the same time.")
+                    } else {
+                        avgStrgy.connect(user).createAveragingStrategy(averagedToken, sourceToken, isActive, amount, frequency)
                     }
+                }
             })
 
             it("... should NOT 'createAveragingStrategy' if two same tokens", async function () {
@@ -79,35 +80,24 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
                     .to.be.revertedWith("The maximun frequency is 12 months.")
             })
 
-            it("... should 'createAveragingStrategy' if less than 10 strategies and different tokens", async function () {
-                // Create a correct strategy sample
-                await expect(avgStrgy.connect(user).createAveragingStrategy(
-                    WBTC_ADDRESS, // averagedToken
-                    DAI_ADDRESS,  // sourceToken
-                    true,         // isActive
-                    AMOUNT,       // amount
-                    FREQUENCY,    // frequency
-                ))
-                // await expect(avgStrgy.createAveragingStrategy(WBTC_ADDRESS, DAI_ADDRESS, true, AMOUNT, FREQUENCY))
-                    .to.emit(avgStrgy, "AveragingStrategyCreated")
-                    .withArgs(
-                        WBTC_ADDRESS, // averagedToken
-                        DAI_ADDRESS,  // sourceToken
-                        true,         // isActive
-                        AMOUNT,       // amount
-                        FREQUENCY,    // frequency
-                        0             // averagingStrategyId
-                    )
+            it("... should 'createAveragingStrategy' 10 times with different `averagingStrategyId`", async function () {
+                let { averagedToken, sourceToken, isActive, amount, frequency } = correctStrategySample;
+                for (let index = 0; index < MAX_STRATEGIES; index++) {
+                    await expect(avgStrgy.connect(user).createAveragingStrategy(averagedToken, sourceToken, isActive, amount, frequency))
+                        .to.emit(avgStrgy, "AveragingStrategyCreated")
+                        .withArgs(averagedToken, sourceToken, isActive, amount, frequency, index)
+                }
 
                 // Post-conditions evaluation
                 strategiesRead = await avgStrgy.connect(user).readAveragingStrategy()
-                strategy = strategiesRead[0]
-                assert(strategy.averagedToken == WBTC_ADDRESS)
-                assert(strategy.sourceToken == DAI_ADDRESS)
-                assert(Number(strategy.amount) == AMOUNT)
-                assert(Number(strategy.frequency) == FREQUENCY)
-                assert(strategy.isActive == true)
-                assert(Number(strategy.averagingStrategyId) == 0)
+                strategiesRead.forEach((strategy, index) => {
+                    assert(strategy.averagedToken == WBTC_ADDRESS)
+                    assert(strategy.sourceToken == DAI_ADDRESS)
+                    assert(Number(strategy.amount) == AMOUNT)
+                    assert(Number(strategy.frequency) == FREQUENCY)
+                    assert(strategy.isActive == true)
+                    assert(Number(strategy.averagingStrategyId) == index)
+                });
             })
         })
     })
