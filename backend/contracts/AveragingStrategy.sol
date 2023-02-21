@@ -3,10 +3,6 @@ pragma solidity 0.8.17;
 
 contract AveragingStrategy {
 
-    // Variables
-    uint averagingStrategiesCounter = 0;
-    address[] averagingAddresses;
-
     struct AveragingStrategyConfig {
         address sourceToken;
         address averagedToken;
@@ -17,6 +13,10 @@ contract AveragingStrategy {
         uint creationTimestamp;
     }
 
+
+    // Variables
+    uint averagingStrategiesCounter = 0;
+    address[] averagingAddresses;
     mapping (address => AveragingStrategyConfig[]) averagingStrategiesList;
 
 
