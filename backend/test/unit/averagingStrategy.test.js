@@ -100,4 +100,23 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
                 });
             })
         })
+
+        describe("getAveragingAddresses", async function () {
+            beforeEach(async () => {
+                // Deployment
+                await deployments.fixture(["averagingStrategy"])
+                avgStrgy = await ethers.getContract("AveragingStrategy")
+            })
+
+            it("... should 'getAveragingAddresses'", async function () {
+                // The first 10 addresses create an strategy each
+                let { averagedToken, sourceToken, isActive, amount, frequency } = correctStrategySample;
+                for (let index = 0; index < MAX_STRATEGIES; index++) {
+                    avgStrgy.connect(accounts[index]).createAveragingStrategy(averagedToken, sourceToken, isActive, amount, frequency)
+                }
+                // Post-conditions evaluation
+                averagingAddresses = await avgStrgy.connect(user).getAveragingAddresses()
+                assert(averagingAddresses.length == 10);
+            })
+        })
     })
