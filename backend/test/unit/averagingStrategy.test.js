@@ -119,4 +119,62 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
                 assert(averagingAddresses.length == 10);
             })
         })
+
+        describe("deleteAveragingStrategy", async function () {
+            beforeEach(async () => {
+                // Deployment
+                await deployments.fixture(["averagingStrategy"])
+                avgStrgy = await ethers.getContract("AveragingStrategy")
+            })
+
+            it("... should NOT 'deleteAveragingStrategy' if id not found", async function () {
+                let { averagedToken, sourceToken, isActive, amount, frequency } = correctStrategySample;
+                // Create a strategy with id = 0
+                await avgStrgy.connect(user).createAveragingStrategy(averagedToken, sourceToken, isActive, amount, frequency)
+                // Create a strategy with id = 1
+                await avgStrgy.connect(deployer).createAveragingStrategy(averagedToken, sourceToken, isActive, amount, frequency)
+
+                // Mid-conditions evaluation
+                strategiesRead = await avgStrgy.connect(user).readAveragingStrategy()
+                assert(strategiesRead.length == 1);
+                assert(Number(strategiesRead[0].averagingStrategyId) == 0)
+
+                strategiesRead = await avgStrgy.connect(deployer).readAveragingStrategy()
+                assert(strategiesRead.length == 1);
+                assert(Number(strategiesRead[0].averagingStrategyId) == 1)
+
+                // User try to delete strategy 1, even if its not the owner, and it exist for another user
+                await expect(avgStrgy.connect(user).deleteAveragingStrategy(1))
+                    .to.be.revertedWith("The maximun frequency is 12 months.")
+                    .to.be.revertedWith("Averaging strategy id not found.")
+
+                // Post-conditions evaluation
+                strategiesRead = await avgStrgy.connect(user).readAveragingStrategy()
+                assert(strategiesRead.length == 1);
+                assert(Number(strategiesRead[0].averagingStrategyId) == 0)
+
+                strategiesRead = await avgStrgy.connect(deployer).readAveragingStrategy()
+                assert(strategiesRead.length == 1);
+                assert(Number(strategiesRead[0].averagingStrategyId) == 1)
+            })
+
+            it("... should 'deleteAveragingStrategy'", async function () {
+                let { averagedToken, sourceToken, isActive, amount, frequency } = correctStrategySample;
+                for (let index = 0; index < MAX_STRATEGIES; index++) {
+                    await avgStrgy.connect(user).createAveragingStrategy(averagedToken, sourceToken, isActive, amount, frequency)
+                }
+
+                // Mid-conditions evaluation
+                strategiesRead = await avgStrgy.connect(user).readAveragingStrategy()
+                assert(strategiesRead.length == MAX_STRATEGIES);
+
+                for (let index = 0; index < MAX_STRATEGIES; index++) {
+                    await avgStrgy.connect(user).deleteAveragingStrategy(index)
+                }
+
+                // Post-conditions evaluation
+                strategiesRead = await avgStrgy.connect(user).readAveragingStrategy()
+                assert(strategiesRead.length == 0);
+            })
+        })
     })

@@ -116,11 +116,14 @@ contract AveragingStrategy {
                 // ...then removes the last, now duplicated, item
                 averagingStrategiesList[msg.sender].pop();
 
+                // Increase strategies counter
+                averagingStrategiesCounter++;
+
                 emit AveragingStrategyDeleted(id);
                 return;
             }
         }
         // ... if a strategy with the same id is not found, revert the transaction
-        revert("Averaging strategy not found");
+        revert("Averaging strategy id not found.");
     }
 }
