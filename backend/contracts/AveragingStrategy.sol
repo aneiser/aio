@@ -79,31 +79,7 @@ contract AveragingStrategy {
     }
 
     // Update
-    function updateStatusAveragingStrategy(address _averagedToken) public {
-        // averagingStrategiesList[_averagedToken].isActive = !averagingStrategiesList[_averagedToken].isActive;
-
-        // emit StatusAveragingStrategyUpdated(_averagedToken, averagingStrategiesList[_averagedToken].isActive);
-    }
-
-    function updateAmountAveragingStrategy(address _averagedToken, uint _amount) public {
-        // averagingStrategiesList[_averagedToken].amount = _amount;
-
-        emit AmountAveragingStrategyUpdated(_averagedToken, _amount);
-    }
-
-    function updateFrequencyAveragingStrategy(address _averagedToken, uint _frequency) public {
-        // averagingStrategiesList[_averagedToken].frequency = _frequency;
-
-        emit FrequencyAveragingStrategyUpdated(_averagedToken, _frequency);
-    }
-
-    function updateAveragingStrategy(address _averagedToken, bool _isActive, uint _amount, uint _frequency) public {
-        // averagingStrategiesList[_averagedToken].isActive = _isActive;
-        // averagingStrategiesList[_averagedToken].amount = _amount;
-        // averagingStrategiesList[_averagedToken].frequency = _frequency;
-
-        emit AveragingStrategyUpdated(_averagedToken, _isActive, _amount, _frequency);
-    }
+    // To recover from git history for later use.
 
     // Delete
     function deleteAveragingStrategy(uint id) public {
