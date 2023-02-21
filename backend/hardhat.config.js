@@ -2,6 +2,8 @@ require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-deploy");
 require("dotenv").config();
 require("@nomiclabs/hardhat-etherscan");
+require("hardhat-gas-reporter");
+require("solidity-coverage")
 
 const INFURA = process.env.INFURA || "";
 const PK = process.env.PK || "";
@@ -40,4 +42,7 @@ module.exports = {
       }
     ]
   },
+  gasReporter: {
+    enabled: true,
+  }
 };
