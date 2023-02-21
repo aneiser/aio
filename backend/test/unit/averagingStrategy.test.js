@@ -13,7 +13,7 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
         let UNDER_AMOUNT = 0.9;
         let UNDER_FREQUENCY = 59; // 50 seconds
         let FREQUENCY = 60;  // 60 seconds
-        let OVER_FREQUENCY = 31557600; // 12 months
+        let OVER_FREQUENCY = 31557601; // 12 months + 1 second
 
         before(async () => {
             accounts = await ethers.getSigners()
@@ -26,6 +26,24 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
                 // Deployment
                 await deployments.fixture(["averagingStrategy"])
                 avgStrgy = await ethers.getContract("AveragingStrategy")
+
+                // Define a correct strategy sample
+                correctStrategySample = {
+                    sourceToken: DAI_ADDRESS,
+                    averagedToken: WBTC_ADDRESS,
+                    amount: AMOUNT,
+                    frequency: FREQUENCY,
+                    isActive: true,
+                    averagingStrategyId: 1,
+                    creationTimestamp: 1
+                }
+            })
+
+            it("... should NOT 'createAveragingStrategy' if less than 1 second frequency", async function () {
+                let { averagedToken, sourceToken, isActive, amount, frequency } = correctStrategySample;
+                frequency = OVER_FREQUENCY
+                await expect(avgStrgy.connect(user).createAveragingStrategy(averagedToken, sourceToken, isActive, amount, frequency))
+                    .to.be.revertedWith("The maximun frequency is 12 months.")
             })
 
             it("... should 'createAveragingStrategy' if less than 10 strategies and different tokens", async function () {
