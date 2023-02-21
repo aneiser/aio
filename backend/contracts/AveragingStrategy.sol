@@ -39,6 +39,7 @@ contract AveragingStrategy {
     // TODO: onlyOwner
     function createAveragingStrategy(address _averagedToken, address _sourceToken, bool _isActive, uint _amount, uint _frequency) public {
         require(averagingStrategiesList[msg.sender].length < 10, 'You cannot have more than 10 averaging strategies at the same time.');
+        require(_frequency >= 60, 'The minimum frequency is 1 minute.');
         require(_frequency <= 31557600, 'The maximun frequency is 12 months.'); // 31557600 seconds = 12 months
 
         // Add address to list, is it wasn't there already

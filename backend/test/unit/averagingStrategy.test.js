@@ -41,6 +41,13 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 
             it("... should NOT 'createAveragingStrategy' if less than 1 second frequency", async function () {
                 let { averagedToken, sourceToken, isActive, amount, frequency } = correctStrategySample;
+                frequency = UNDER_FREQUENCY
+                await expect(avgStrgy.connect(user).createAveragingStrategy(averagedToken, sourceToken, isActive, amount, frequency))
+                    .to.be.revertedWith("The minimum frequency is 1 minute.")
+            })
+
+            it("... should NOT 'createAveragingStrategy' if less than 1 second frequency", async function () {
+                let { averagedToken, sourceToken, isActive, amount, frequency } = correctStrategySample;
                 frequency = OVER_FREQUENCY
                 await expect(avgStrgy.connect(user).createAveragingStrategy(averagedToken, sourceToken, isActive, amount, frequency))
                     .to.be.revertedWith("The maximun frequency is 12 months.")
