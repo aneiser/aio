@@ -14,6 +14,7 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
         let UNDER_FREQUENCY = 59; // 50 seconds
         let FREQUENCY = 60;  // 60 seconds
         let OVER_FREQUENCY = 31557601; // 12 months + 1 second
+        let MAX_STRATEGIES = 10;
 
         before(async () => {
             accounts = await ethers.getSigners()
@@ -37,6 +38,17 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
                     averagingStrategyId: 1,
                     creationTimestamp: 1
                 }
+            })
+
+            it("... should NOT 'createAveragingStrategy' if more than 10 averaging strategies at the same time", async function () {
+                let { averagedToken, sourceToken, isActive, amount, frequency } = correctStrategySample;
+                for (let index = 0; index < MAX_STRATEGIES+1; index++) {
+                    avgStrgy.connect(user).createAveragingStrategy(averagedToken, sourceToken, isActive, index+2, frequency)
+                    if (index >= MAX_STRATEGIES){
+                        await expect(avgStrgy.connect(user).createAveragingStrategy(averagedToken, sourceToken, isActive, amount, frequency))
+                            .to.be.revertedWith("You cannot have more than 10 averaging strategies at the same time.")
+                        }
+                    }
             })
 
             it("... should NOT 'createAveragingStrategy' if two same tokens", async function () {
