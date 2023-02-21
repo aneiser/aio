@@ -9,8 +9,8 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
         let accounts;
         let DAI_ADDRESS = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
         let WBTC_ADDRESS = "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599";
-        let AMOUNT = 2;
-        let UNDER_AMOUNT = 1;
+        let AMOUNT = 1;
+        let UNDER_AMOUNT = 0;
         let UNDER_FREQUENCY = 59; // 50 seconds
         let FREQUENCY = 60;  // 60 seconds
         let OVER_FREQUENCY = 31557601; // 12 months + 1 second
@@ -59,11 +59,11 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
                     .to.be.revertedWith("You must use two different tokens.")
             })
 
-            it("... should NOT 'createAveragingStrategy' if less than amount 2 source token", async function () {
+            it("... should NOT 'createAveragingStrategy' if less than amount 1 source token", async function () {
                 let { averagedToken, sourceToken, isActive, amount, frequency } = correctStrategySample;
                 amount = UNDER_AMOUNT
                 await expect(avgStrgy.connect(user).createAveragingStrategy(averagedToken, sourceToken, isActive, amount, frequency))
-                    .to.be.revertedWith("The minimum amount to spend is 2.")
+                    .to.be.revertedWith("The minimum amount to spend is 1.")
             })
 
             it("... should NOT 'createAveragingStrategy' if less than 1 minute frequency", async function () {
