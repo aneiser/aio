@@ -30,7 +30,7 @@ contract AveragingStrategy {
     event AmountAveragingStrategyUpdated    (address averagedToken,                                     uint amount);
     event FrequencyAveragingStrategyUpdated (address averagedToken,                                                  uint frequency);
     event AveragingStrategyUpdated          (address averagedToken,                      bool isActive, uint amount, uint frequency);
-    event AveragingStrategyDeleted          (address averagedToken);
+    event AveragingStrategyDeleted          (uint id);
 
 
     // Functions ---------------------------------------------------------------
@@ -106,10 +106,21 @@ contract AveragingStrategy {
     }
 
     // Delete
-    function deleteAveragingStrategy(address _averagedToken) public {
-        delete averagingStrategiesList[_averagedToken];
+    function deleteAveragingStrategy(uint id) public {
+        // Search among the user strategies...
+        for (uint i = 0; i < averagingStrategiesList[msg.sender].length; i++) {
+            // ...for the strategy with the same id...
+            if (averagingStrategiesList[msg.sender][i].averagingStrategyId == id) {
+                // ... to override it with the last item and...
+                averagingStrategiesList[msg.sender][i] = averagingStrategiesList[msg.sender][averagingStrategiesList[msg.sender].length - 1];
+                // ...then removes the last, now duplicated, item
+                averagingStrategiesList[msg.sender].pop();
 
-        emit AveragingStrategyDeleted(_averagedToken);
+                emit AveragingStrategyDeleted(id);
+                return;
+            }
+        }
+        // ... if a strategy with the same id is not found, revert the transaction
+        revert("Averaging strategy not found");
     }
-
 }

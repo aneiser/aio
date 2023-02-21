@@ -5,6 +5,7 @@ import { ethers } from 'ethers'
 // WagmiConfig
 import { useAccount } from 'wagmi'
 import { useProvider } from 'wagmi'
+import { useSigner } from 'wagmi'
 // ChakraProvider
 import {
     Table,
@@ -21,6 +22,8 @@ import { Switch } from '@chakra-ui/react'
 import { Text } from '@chakra-ui/react'
 import { Stack, HStack, VStack } from '@chakra-ui/react'
 import { Avatar, AvatarBadge, AvatarGroup } from '@chakra-ui/react'
+import { Button, ButtonGroup } from '@chakra-ui/react'
+import { useToast } from '@chakra-ui/react'
 // Components & Dapp contracts
 // TODO import AveragingStrategyContract from 'public/AveragingStrategy.json'
 import AveragingStrategyContract from '../../../../backend/artifacts/contracts/AveragingStrategy.sol/AveragingStrategy.json'
@@ -38,6 +41,8 @@ export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setS
     // -----------------------------------------------------------------------------------------------------------------
     // ...the smartcontract (sc/SC) events
     const [scEvents, setSCEvents] = useState(null)
+    // ...the waiting for the blockchain confirmation
+    const [waitingBlochainSignatureConfirmation, setWaitingBlochainSignatureConfirmation] = useState(false)
 
 
     // Wagmi hooks for... (https://wagmi.sh/react/getting-started)
@@ -46,6 +51,13 @@ export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setS
     const { address, isConnected } = useAccount()
     // ...accessing Client's ethers Provider.
     const provider = useProvider()
+    // ...accessing ethers Signer object for connected account.
+    const { data: signer } = useSigner()
+
+
+    // ChakraProvider
+    // -----------------------------------------------------------------------------------------------------------------
+    const toast = useToast()
 
 
     // `useEffect`s
@@ -134,6 +146,35 @@ export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setS
         }
     };
 
+    // Deletes an averaging strategy
+    const deleteAveragingStrategy = async (id) => {
+        setWaitingBlochainSignatureConfirmation(id)
+
+        try {
+            const contract = new ethers.Contract(AVERAGING_STRATEGY_CONTRACT_ADDRESS, AveragingStrategyContract.abi, signer)
+            let transaction = await contract.deleteAveragingStrategy(id)
+            await transaction.wait() // = wait(1)
+
+            getSCStrategiesArray()
+            setWaitingBlochainSignatureConfirmation(false)
+            toast({
+                title: `Strategy deleted`,
+                status: 'success',
+                duration: 9000,
+                isClosable: true,
+            })
+        } catch (error) {
+            setWaitingBlochainSignatureConfirmation(false)
+            toast({
+                title: 'Error deleting the strategy',
+                description: error.message,
+                status: 'error',
+                duration: 9000,
+                isClosable: true,
+            })
+        }
+    }
+
 
     // HTML Content
     // -----------------------------------------------------------------------------------------------------------------
@@ -146,16 +187,18 @@ export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setS
                         <Th>Status</Th>
                         <Th isNumeric>Amount</Th>
                         <Th>From</Th>
-                        <Th>To</Th>
+                        <Th>To (current price)</Th>
                         <Th isNumeric>Each</Th>
-                        {/* <Th isNumeric>Current price</Th>
+                        <Th isNumeric>Current price</Th>
+                        <Th></Th>
+                        {/*
                         <Th isNumeric>Avg. price</Th>
                         <Th isNumeric>Diff</Th> */}
                     </Tr>
                 </Thead>
                 <Tbody>
                     {strategiesList && strategiesList.map((strategy, index) =>
-                    <Tr key={index}>
+                    <Tr key={index} data-id={strategy.averagingStrategyId}>
                         <Td>
                             <Switch
                                 // id="initial-status"
@@ -188,6 +231,16 @@ export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setS
                             </HStack>
                         </Td>
                         <Td isNumeric>{convertSecondsToFrequency(strategy.frequency)}</Td>
+                        <Td isNumeric>{supportedTokens.find(token => ethers.utils.getAddress(strategy.tokenToAverageAddress) === ethers.utils.getAddress(token.address)).usd} $</Td>
+                        <Td>
+                            <Button
+                                isLoading={waitingBlochainSignatureConfirmation === strategy.averagingStrategyId}
+                                colorScheme="red"
+                                loadingText=""
+                                onClick={() => deleteAveragingStrategy(strategy.averagingStrategyId)}>
+                                    Delete
+                            </Button>
+                        </Td>
                         {/* <Td isNumeric>1600 $</Td>
                         <Td isNumeric>1300 $</Td>
                         <Td isNumeric>10 %</Td> */}
