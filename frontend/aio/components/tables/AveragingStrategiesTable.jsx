@@ -97,7 +97,8 @@ export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setS
             address: AVERAGING_STRATEGY_CONTRACT_ADDRESS,
             fromBlock: DEPLOYMENT_BLOCK
         }
-        let events = await contract.queryFilter(filter)
+        // let events = await contract.queryFilter(filter)
+        let events = await contract.queryFilter("*", -3000, 'latest')
         // console.log(events)
         setSCEvents(events)
     }
