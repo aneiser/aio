@@ -3,7 +3,7 @@ import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
 // Wagmi
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { hardhat } from 'wagmi/chains';
+import { hardhat, goerli } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 // Chakra UI
 import { ChakraProvider } from '@chakra-ui/react'
