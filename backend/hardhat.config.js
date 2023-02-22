@@ -1,5 +1,9 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-deploy");
+require("dotenv").config();
+
+const INFURA = process.env.INFURA || "";
+const PK = process.env.PK || "";
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -8,6 +12,12 @@ module.exports = {
     localhost: {
       url: "http://127.0.0.1:8545",
       chainId: 31337
+    },
+    goerli: {
+      url: INFURA,
+      accounts: [`0x${PK}`],
+      chainId: 5,
+      blockConfirmations: 6
     }
   },
   namedAccounts: {

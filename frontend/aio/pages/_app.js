@@ -10,13 +10,13 @@ import { ChakraProvider } from '@chakra-ui/react'
 
 // Wagmi
 const { chains, provider } = configureChains(
-  [hardhat],
+  [hardhat, goerli],
   [publicProvider()]
 );
 
 // Rainbowkit
 const { connectors } = getDefaultWallets({
-  appName: 'Adrián Neila Serrano Project #3',
+  appName: 'AIO Project',
   chains
 });
 
