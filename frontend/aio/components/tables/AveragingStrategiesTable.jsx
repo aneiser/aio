@@ -25,8 +25,7 @@ import { Avatar, AvatarBadge, AvatarGroup } from '@chakra-ui/react'
 import { Button, ButtonGroup } from '@chakra-ui/react'
 import { useToast } from '@chakra-ui/react'
 // Components & Dapp contracts
-// TODO import AveragingStrategyContract from 'public/AveragingStrategy.json'
-import AveragingStrategyContract from '../../../../backend/artifacts/contracts/AveragingStrategy.sol/AveragingStrategy.json'
+import AveragingStrategyContract from 'public/AveragingStrategy.json'
 
 
 export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setStrategiesList }) => {
@@ -99,7 +98,7 @@ export const AveragingStrategiesTable = ({ supportedTokens, strategiesList, setS
             fromBlock: DEPLOYMENT_BLOCK
         }
         let events = await contract.queryFilter(filter)
-        console.log(events)
+        // console.log(events)
         setSCEvents(events)
     }
 

@@ -35,8 +35,7 @@ import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import { useToast } from '@chakra-ui/react'
 // Components & Dapp contracts
 import MockDaiTokenContract from 'public/MockDaiToken.json'
-// TODO import AveragingStrategyContract from 'public/AveragingStrategy.json'
-import AveragingStrategyContract from '../../../../backend/artifacts/contracts/AveragingStrategy.sol/AveragingStrategy.json'
+import AveragingStrategyContract from 'public/AveragingStrategy.json'
 
 
 export const AveragingStrategiesForm = ({ supportedTokens, strategiesList, setStrategiesList }) => {
